@@ -15,7 +15,7 @@ CUSTOMERS = client['main']['customers']
 
 @app.get("/customers")
 async def get_customers():
-    return [item async for item in CUSTOMERS.find(projection={"_id": 0})]
+    return await CUSTOMERS.find(projection={"_id": 0}).to_list(length=None)
 
 
 @app.post("/customers")
