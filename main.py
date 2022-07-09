@@ -22,14 +22,13 @@ async def get_customers():
     return await CUSTOMERS.find().to_list(length=None)
 
 
-@app.post("/customers", response_model=CustomerModel)
+@app.post("/customers", response_model=CustomerModel, status_code=HTTPStatus.CREATED)
 async def add_customer(customer: CustomerModel):
     await assert_cars_dont_already_exist(customer.cars)
 
     customer = jsonable_encoder(customer)
     new_customer = await CUSTOMERS.insert_one(customer)
-    created_student = await CUSTOMERS.find_one({"_id": new_customer.inserted_id})
-    return JSONResponse(status_code=HTTPStatus.CREATED, content=created_student)
+    return await CUSTOMERS.find_one({"_id": new_customer.inserted_id})
 
 
 @app.get("/customers/{customer_id}", response_model=CustomerModel)
@@ -65,9 +64,7 @@ async def delete_customer(customer_id: str):
     result = await CUSTOMERS.delete_one({"_id": customer_id})
 
     if result.deleted_count == 0:
-        return Response(status_code=HTTPStatus.NOT_FOUND)
-
-    return Response(status_code=HTTPStatus.OK)
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such customer")
 
 
 @app.get("/customers/{customer_id}/cars/", response_model=list[str])
@@ -114,6 +111,8 @@ async def assert_cars_dont_already_exist(license_plate_numbers: List[str], allow
 
 
 async def get_cars_by_id(customer_id) -> list[str]:
-    return (await CUSTOMERS.find_one(
-        {"_id": customer_id}
-    ))['cars']
+    customer = await CUSTOMERS.find_one({"_id": customer_id})
+    try:
+        return customer['cars']
+    except TypeError:  # NoneType
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such customer")
