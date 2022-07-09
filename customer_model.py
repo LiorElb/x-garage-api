@@ -28,7 +28,7 @@ class CustomerModel(BaseModel):
                 "name": "John Doe",
                 "email": "jdoe@example.com",
                 "phone_number": "054-3532312",
-                "address": "הדולב 4, גבעון החדשה",
+                "address": "123 Street, NYC",
             }
         }
 
@@ -51,6 +51,6 @@ class UpdateCustomerModel(BaseModel):
                 "name": "John Doe",
                 "email": "jdoe@example.com",
                 "phone_number": "054-3532312",
-                "address": "הדולב 4, גבעון החדשה",
+                "address": "123 Street, NYC",
             }
         }

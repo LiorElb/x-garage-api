@@ -22,7 +22,7 @@ class CarModel(BaseModel):
                 "name": "John Doe",
                 "email": "jdoe@example.com",
                 "phone_number": "054-3532312",
-                "address": "הדולב 4, גבעון החדשה",
+                "address": "123 Street, NYC",
             }
         }
 
@@ -41,9 +41,9 @@ class UpdateCustomerModel(BaseModel):
         }
         schema_extra = {
             "example": {
-                "name": "Jane Doe",
+                "name": "John Doe",
                 "email": "jdoe@example.com",
-                "course": "Experiments, Science, and Fashion in Nanophotonics",
-                "gpa": "3.0",
+                "phone_number": "054-3532312",
+                "address": "123 Street, NYC",
             }
         }
