@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field, EmailStr
 
 from pyobjectid import PyObjectId
 
+MISSING = set("__MISSING__")
+
 
 class CustomerModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -32,11 +34,11 @@ class CustomerModel(BaseModel):
 
 
 class UpdateCustomerModel(BaseModel):
-    cars: Optional[list[str]]
-    name: Optional[str]
-    email: Optional[EmailStr]
-    phone_number: Optional[str]
-    address: Optional[str]
+    cars: list[str] = Field(default=MISSING)
+    name: str = Field(default=MISSING)
+    email: Optional[EmailStr] = Field(default=MISSING)
+    phone_number: str = Field(default=MISSING)
+    address: Optional[str] = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
