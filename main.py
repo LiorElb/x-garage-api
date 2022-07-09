@@ -76,19 +76,27 @@ async def get_cars(customer_id: str):
 
 @app.post("/customers/{customer_id}/cars/{plate_number_to_add}", response_model=list[str])
 async def add_car(customer_id: str, plate_number_to_add: str):
-    await CUSTOMERS.update_one(
+    result = await CUSTOMERS.update_one(
         {"_id": customer_id},
-        update={"$push": {"cars": plate_number_to_add}}
+        update={"$addToSet": {"cars": plate_number_to_add}}
     )
+
+    if result.modified_count == 0:
+        raise HTTPException(status_code=HTTPStatus.CONFLICT, detail='Car already exists')
+
     return await get_cars_by_id(customer_id)
 
 
 @app.delete("/customers/{customer_id}/cars/{plate_number_to_delete}")
 async def remove_car(customer_id: str, plate_number_to_delete: str):
-    await CUSTOMERS.update_one(
+    result = await CUSTOMERS.update_one(
         {"_id": customer_id},
         update={"$pull": {"cars": plate_number_to_delete}}
     )
+
+    if result.modified_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='No such car')
+
     return await get_cars_by_id(customer_id)
 
 
@@ -98,7 +106,7 @@ async def assert_cars_dont_already_exist(license_plate_numbers: List[str], allow
     if existing is None:
         return
 
-    if any(plate_num in existing['cars'] for plate_num in allow):
+    if any(plate_num in existing.cars for plate_num in allow):
         return
 
     raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="license number already exists")
