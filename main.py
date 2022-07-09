@@ -2,79 +2,98 @@ import os
 from http import HTTPStatus
 from typing import List, Iterable
 
-from fastapi import FastAPI, Response, HTTPException
+from fastapi import FastAPI, HTTPException, Body
 import motor.motor_asyncio as motor
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse, Response
 
-from customer import Customer
+from customer_model import CustomerModel, UpdateCustomerModel
 
 app = FastAPI()
 MONGO_HOST = os.getenv('GARAGE_MONGO_HOST', 'localhost:27017/')
 client = motor.AsyncIOMotorClient(f'mongodb://{MONGO_HOST}')
 CUSTOMERS = client['main']['customers']
+CARS = client['main']['cars']
 
 
-@app.get("/customers")
+@app.get("/customers", response_model=list[CustomerModel])
 async def get_customers():
-    return await CUSTOMERS.find(projection={"_id": 0}).to_list(length=None)
+    return await CUSTOMERS.find().to_list(length=None)
 
 
-@app.post("/customers")
-async def add_customer(customer: Customer):
-    await assert_license_numbers_dont_already_exist(customer.license_plate_numbers)
+@app.post("/customers", response_model=CustomerModel)
+async def add_customer(customer: CustomerModel):
+    await assert_cars_dont_already_exist(customer.cars)
 
-    await CUSTOMERS.insert_one(customer.dict())
-    return {"message": "success"}
-
-
-@app.get("/customers/{license_plate_number}")
-async def get_customer(license_plate_number: str):
-    return await CUSTOMERS.find_one({"license_plate_numbers": license_plate_number}, projection={"_id": 0})
+    customer = jsonable_encoder(customer)
+    new_customer = await CUSTOMERS.insert_one(customer)
+    created_student = await CUSTOMERS.find_one({"_id": new_customer.inserted_id})
+    return JSONResponse(status_code=HTTPStatus.CREATED, content=created_student)
 
 
-@app.put("/customers/{license_plate_number}")
-async def update_customer(license_plate_number: str, customer: Customer):
-    existing = await CUSTOMERS.find_one({"license_plate_numbers": license_plate_number})
-    await assert_license_numbers_dont_already_exist(customer.license_plate_numbers,
-                                                    allow=existing['license_plate_numbers'])
+@app.get("/customers/{customer_id}", response_model=CustomerModel)
+async def show_student(customer_id: str):
+    customer = await CUSTOMERS.find_one({"_id": customer_id})
 
-    await CUSTOMERS.replace_one({"license_plate_numbers": license_plate_number}, customer.dict())
-    return {"message": "success"}
+    if customer is None:
+        raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
 
-
-@app.delete("/customers/{license_plate_number}")
-async def delete_customer(license_plate_number: str):
-    result = await CUSTOMERS.delete_one({"license_plate_numbers": license_plate_number})
-    return {'message': f'deleted {result.deleted_count} customers'}
+    return customer
 
 
-@app.get("/customers/{license_plate_number}/cars/")
-async def get_cars(license_plate_number: str):
-    return await CUSTOMERS.find_one(
-        {"license_plate_numbers": license_plate_number},
-        projection={"_id": 0, "license_plate_numbers": 1}
-    )['license_plate_numbers']
+@app.put("/customers/{customer_id}", response_model=CustomerModel)
+async def update_student(customer_id: str, customer: UpdateCustomerModel = Body(...)):
+    customer = {k: v for k, v in customer.dict().items() if v is not None}
+
+    if len(customer) == 0:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Nothing to update")
+
+    if (existing := CUSTOMERS.find_one({"_id": customer_id})) is None:
+        raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
+
+    if 'cars' in customer:
+        await assert_cars_dont_already_exist(customer['cars'], existing['cars'])
+
+    await CUSTOMERS.update_one({"_id": customer_id}, {"$set": customer})
+
+    return await CUSTOMERS.find_one({"_id": customer_id})
 
 
-@app.post("/customers/{license_plate_number}/cars/{plate_number_to_add}")
-async def add_car(license_plate_number: str, plate_number_to_add: str):
+@app.delete("/customers/{customer_id}")
+async def delete_customer(customer_id: str):
+    result = await CUSTOMERS.delete_one({"_id": customer_id})
+
+    if result.deleted_count == 0:
+        return Response(status_code=HTTPStatus.NOT_FOUND)
+
+    return Response(status_code=HTTPStatus.OK)
+
+
+@app.get("/customers/{customer_id}/cars/", response_model=list[str])
+async def get_cars(customer_id: str):
+    return await get_cars_by_id(customer_id)
+
+
+@app.post("/customers/{customer_id}/cars/{plate_number_to_add}", response_model=list[str])
+async def add_car(customer_id: str, plate_number_to_add: str):
     await CUSTOMERS.update_one(
-        {"license_plate_numbers": license_plate_number},
-        update={"$push": {"license_plate_numbers": plate_number_to_add}}
+        {"_id": customer_id},
+        update={"$push": {"cars": plate_number_to_add}}
     )
-    return {"message": "success"}
+    return await get_cars_by_id(customer_id)
 
 
-@app.delete("/customers/{license_plate_number}/cars/{plate_number_to_delete}")
-async def remove_car(license_plate_number: str, plate_number_to_delete: str):
+@app.delete("/customers/{customer_id}/cars/{plate_number_to_delete}")
+async def remove_car(customer_id: str, plate_number_to_delete: str):
     await CUSTOMERS.update_one(
-        {"license_plate_numbers": license_plate_number},
-        update={"$pull": {"license_plate_numbers": plate_number_to_delete}}
+        {"_id": customer_id},
+        update={"$pull": {"cars": plate_number_to_delete}}
     )
-    return {"message": "success"}
+    return await get_cars_by_id(customer_id)
 
 
-async def assert_license_numbers_dont_already_exist(license_plate_numbers: List[str], allow: Iterable[str] = ()):
-    existing = await CUSTOMERS.find_one({"license_plate_numbers": {"$in": license_plate_numbers}})
+async def assert_cars_dont_already_exist(license_plate_numbers: List[str], allow: Iterable[str] = ()) -> None:
+    existing = await CUSTOMERS.find_one({"cars": {"$in": license_plate_numbers}})
 
     if existing is None:
         return
@@ -83,3 +102,9 @@ async def assert_license_numbers_dont_already_exist(license_plate_numbers: List[
         return
 
     raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="license number already exists")
+
+
+async def get_cars_by_id(customer_id) -> list[str]:
+    return (await CUSTOMERS.find_one(
+        {"_id": customer_id}
+    ))['cars']
