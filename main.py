@@ -98,7 +98,7 @@ async def assert_cars_dont_already_exist(license_plate_numbers: List[str], allow
     if existing is None:
         return
 
-    if any(plate_num in existing['license_plate_numbers'] for plate_num in allow):
+    if any(plate_num in existing['cars'] for plate_num in allow):
         return
 
     raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="license number already exists")
