@@ -31,7 +31,7 @@ async def add_customer(customer: CustomerModel):
 
 
 @app.get("/customers/{customer_id}", response_model=CustomerModel)
-async def show_student(customer_id: str):
+async def show_customer(customer_id: str):
     customer = await CUSTOMERS.find_one({"_id": customer_id})
 
     if customer is None:
@@ -41,13 +41,14 @@ async def show_student(customer_id: str):
 
 
 @app.put("/customers/{customer_id}", response_model=CustomerModel)
-async def update_student(customer_id: str, customer: UpdateCustomerModel = Body(...)):
+async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body(...)):
     customer = {k: v for k, v in customer.dict().items() if v != customer_model.MISSING}
 
     if len(customer) == 0:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Nothing to update")
 
-    if (existing := await CUSTOMERS.find_one({"_id": customer_id})) is None:
+    existing = await CUSTOMERS.find_one({"_id": customer_id}, projection={"_id": 1})
+    if existing is None:
         raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
 
     if 'cars' in customer:
