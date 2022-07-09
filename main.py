@@ -1,18 +1,17 @@
 import os
 from http import HTTPStatus
-from typing import List, Iterable, Optional
 
 from fastapi import FastAPI, HTTPException, Body
 import motor.motor_asyncio as motor
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse, Response
 
 import customer_model
 from customer_model import CustomerModel, UpdateCustomerModel
 
 app = FastAPI()
-MONGO_HOST = os.getenv('GARAGE_MONGO_HOST', 'localhost:27017/')
-client = motor.AsyncIOMotorClient(f'mongodb://{MONGO_HOST}')
+MONGO_HOST = os.getenv('GARAGE_MONGO_HOST', 'localhost')
+MONGO_PORT = os.getenv('GARAGE_MONGO_PORT', '27017')
+client = motor.AsyncIOMotorClient(f'mongodb://{MONGO_HOST}:{MONGO_PORT}/')
 CUSTOMERS = client['main']['customers']
 CARS = client['main']['cars']
 
@@ -98,7 +97,7 @@ async def remove_car(customer_id: str, plate_number_to_delete: str):
     return await get_cars_by_id(customer_id)
 
 
-async def assert_cars_dont_already_exist(license_plate_numbers: List[str], allowed_id: str = None) -> None:
+async def assert_cars_dont_already_exist(license_plate_numbers: list[str], allowed_id: str = None) -> None:
     existing = await CUSTOMERS.find_one(
         {"cars": {"$in": license_plate_numbers},
          "_id": {"$ne": allowed_id}}
