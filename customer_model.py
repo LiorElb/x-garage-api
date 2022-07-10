@@ -1,11 +1,9 @@
 from typing import Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, root_validator
 
 from pyobjectid import PyObjectId
-
-MISSING = set("__MISSING__")
 
 
 class CustomerModel(BaseModel):
@@ -34,11 +32,23 @@ class CustomerModel(BaseModel):
 
 
 class UpdateCustomerModel(BaseModel):
-    cars: list[str] = Field(default=MISSING)
-    name: str = Field(default=MISSING)
-    email: Optional[EmailStr] = Field(default=MISSING)
-    phone_number: str = Field(default=MISSING)
-    address: Optional[str] = Field(default=MISSING)
+    _MISSING = set("__MISSING__")
+
+    cars: list[str] = Field(default=_MISSING)
+    name: str = Field(default=_MISSING)
+    email: Optional[EmailStr] = Field(default=_MISSING)
+    phone_number: str = Field(default=_MISSING)
+    address: Optional[str] = Field(default=_MISSING)
+
+    @root_validator(pre=True)
+    def not_empty(cls, values):
+        if not any(v != cls._MISSING for v in values):
+            raise ValueError('Must have at least 1 value')
+        return values
+
+    def dict(self, *args, **kwargs):
+        kwargs['exclude_defaults'] = True
+        return super().dict(*args, **kwargs)
 
     class Config:
         arbitrary_types_allowed = True

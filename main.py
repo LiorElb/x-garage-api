@@ -1,19 +1,12 @@
-import os
 from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException, Body
-import motor.motor_asyncio as motor
 from fastapi.encoders import jsonable_encoder
 
-import customer_model
 from customer_model import CustomerModel, UpdateCustomerModel
+from mongo_client import CUSTOMERS
 
 app = FastAPI()
-MONGO_HOST = os.getenv('GARAGE_MONGO_HOST', 'localhost')
-MONGO_PORT = os.getenv('GARAGE_MONGO_PORT', '27017')
-client = motor.AsyncIOMotorClient(f'mongodb://{MONGO_HOST}:{MONGO_PORT}/')
-CUSTOMERS = client['main']['customers']
-CARS = client['main']['cars']
 
 
 @app.get("/customers", response_model=list[CustomerModel])
@@ -42,11 +35,7 @@ async def show_customer(customer_id: str):
 
 @app.put("/customers/{customer_id}", response_model=CustomerModel)
 async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body(...)):
-    customer = {k: v for k, v in customer.dict().items() if v != customer_model.MISSING}
-
-    if len(customer) == 0:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Nothing to update")
-
+    customer = customer.dict()
     existing = await CUSTOMERS.find_one({"_id": customer_id}, projection={"_id": 1})
     if existing is None:
         raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
