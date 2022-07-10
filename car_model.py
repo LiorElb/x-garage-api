@@ -27,7 +27,7 @@ class CarModel(BaseModel):
 
 
 class UpdateCarModel(BaseUpdateModel):
-    license_plate_number: str | None = Field(default=None)
+    license_plate_number: str | None = Field(default=MISSING)
     code: str | None = Field(default=MISSING)
 
     class Config:
