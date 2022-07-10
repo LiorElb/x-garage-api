@@ -35,15 +35,16 @@ async def show_customer(customer_id: str):
 
 @app.put("/customers/{customer_id}", response_model=CustomerModel)
 async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body(...)):
-    customer = customer.dict()
+    new_customer = customer.dict()
+
     existing = await CUSTOMERS.find_one({"_id": customer_id}, projection={"_id": 1})
     if existing is None:
-        raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Customer {customer_id} not found")
 
-    if 'cars' in customer:
-        await assert_cars_dont_already_exist(customer['cars'], existing['_id'])
+    if 'cars' in new_customer:
+        await assert_cars_dont_already_exist(new_customer['cars'], existing['_id'])
 
-    await CUSTOMERS.update_one({"_id": customer_id}, {"$set": customer})
+    await CUSTOMERS.update_one({"_id": customer_id}, {"$set": new_customer})
 
     return await CUSTOMERS.find_one({"_id": customer_id})
 
