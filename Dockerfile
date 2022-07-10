@@ -1,8 +1,9 @@
 FROM python:3.10-bullseye
 
-COPY ./requirements.txt /app/
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+WORKDIR /opt/garage-api
 
-COPY . /app
-WORKDIR /app
+COPY ./requirements.txt .
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+COPY . .
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
