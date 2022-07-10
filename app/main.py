@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.encoders import jsonable_encoder
 
-from customer_model import CustomerModel, UpdateCustomerModel
+from models.customer_model import CustomerModel, UpdateCustomerModel
 from mongo_client import CUSTOMERS
 
 app = FastAPI()

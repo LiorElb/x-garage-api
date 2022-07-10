@@ -39,6 +39,7 @@ class UpdateCustomerModel(BaseUpdateModel):
 
     class Config:
         arbitrary_types_allowed = True
+
         json_encoders = {
             ObjectId: str
         }
