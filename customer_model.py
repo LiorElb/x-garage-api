@@ -1,6 +1,7 @@
 from bson import ObjectId
-from pydantic import BaseModel, Field, EmailStr, root_validator
+from pydantic import BaseModel, Field, EmailStr
 
+from base_update_model import MISSING, BaseUpdateModel
 from pyobjectid import PyObjectId
 
 
@@ -29,24 +30,12 @@ class CustomerModel(BaseModel):
         }
 
 
-class UpdateCustomerModel(BaseModel):
-    _MISSING = '__MISSING__'
-
-    cars: list[str] = Field(default=_MISSING)
-    name: str = Field(default=_MISSING)
-    phone_number: str = Field(default=_MISSING)
-    email: EmailStr | None = Field(default=_MISSING)
-    address: str | None = Field(default=_MISSING)
-
-    @root_validator(pre=True)
-    def not_empty(cls, values):
-        if not any(v != cls._MISSING for v in values):
-            raise ValueError('Must have at least 1 value')
-        return values
-
-    def dict(self, *args, **kwargs):
-        kwargs['exclude_unset'] = True
-        return super().dict(*args, **kwargs)
+class UpdateCustomerModel(BaseUpdateModel):
+    cars: list[str] = Field(default=MISSING)
+    name: str = Field(default=MISSING)
+    phone_number: str = Field(default=MISSING)
+    email: EmailStr | None = Field(default=MISSING)
+    address: str | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True

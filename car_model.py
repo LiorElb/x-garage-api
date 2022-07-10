@@ -1,13 +1,14 @@
 from bson import ObjectId
 from pydantic import BaseModel, Field, EmailStr
 
+from base_update_model import BaseUpdateModel, MISSING
 from pyobjectid import PyObjectId
 
 
 class CarModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     license_plate_number: str = Field(...)
-    code: str = Field(...)
+    code: str | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
@@ -25,12 +26,9 @@ class CarModel(BaseModel):
         }
 
 
-class UpdateCustomerModel(BaseModel):
-    cars: list[str] | None
-    name: str | None
-    email: EmailStr
-    phone_number: str | None
-    address: str | None
+class UpdateCarModel(BaseUpdateModel):
+    license_plate_number: str | None = Field(default=None)
+    code: str | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
