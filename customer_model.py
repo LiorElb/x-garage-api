@@ -1,5 +1,3 @@
-from typing import Optional
-
 from bson import ObjectId
 from pydantic import BaseModel, Field, EmailStr, root_validator
 
@@ -11,8 +9,8 @@ class CustomerModel(BaseModel):
     cars: list[str] = Field(default_factory=list)
     name: str = Field(...)
     phone_number: str = Field(...)
-    email: Optional[EmailStr] = Field(default=None)
-    address: Optional[str] = Field(default=None)
+    email: EmailStr | None = Field(default=None)
+    address: str | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
@@ -36,9 +34,9 @@ class UpdateCustomerModel(BaseModel):
 
     cars: list[str] = Field(default=_MISSING)
     name: str = Field(default=_MISSING)
-    email: Optional[EmailStr] = Field(default=_MISSING)
     phone_number: str = Field(default=_MISSING)
-    address: Optional[str] = Field(default=_MISSING)
+    email: EmailStr | None = Field(default=_MISSING)
+    address: str | None = Field(default=_MISSING)
 
     @root_validator(pre=True)
     def not_empty(cls, values):
@@ -47,7 +45,7 @@ class UpdateCustomerModel(BaseModel):
         return values
 
     def dict(self, *args, **kwargs):
-        kwargs['exclude_defaults'] = True
+        kwargs['exclude_unset'] = True
         return super().dict(*args, **kwargs)
 
     class Config:

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from bson import ObjectId
 from pydantic import BaseModel, Field, EmailStr
 
@@ -28,11 +26,11 @@ class CarModel(BaseModel):
 
 
 class UpdateCustomerModel(BaseModel):
-    cars: Optional[list[str]]
-    name: Optional[str]
+    cars: list[str] | None
+    name: str | None
     email: EmailStr
-    phone_number: Optional[str]
-    address: Optional[str]
+    phone_number: str | None
+    address: str | None
 
     class Config:
         arbitrary_types_allowed = True
