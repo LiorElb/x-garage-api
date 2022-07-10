@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException, Body
 from fastapi.encoders import jsonable_encoder
 
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from mongo_client import CUSTOMERS
+from app.mongo_client import CUSTOMERS
 
 app = FastAPI()
 

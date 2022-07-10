@@ -1,8 +1,8 @@
 from bson import ObjectId
 from pydantic import BaseModel, Field, EmailStr
 
-from base_update_model import MISSING, BaseUpdateModel
-from pyobjectid import PyObjectId
+from models.base_update_model import BaseUpdateModel, MISSING
+from models.pyobjectid import PyObjectId
 
 
 class CustomerModel(BaseModel):
