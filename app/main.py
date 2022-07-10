@@ -93,10 +93,8 @@ async def assert_cars_dont_already_exist(license_plate_numbers: list[str], allow
          "_id": {"$ne": allowed_id}}
     )
 
-    if existing is None:
-        return
-
-    raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="license number already exists")
+    if existing is not None:
+        raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="license number already exists")
 
 
 async def get_cars_by_id(customer_id) -> list[str]:
