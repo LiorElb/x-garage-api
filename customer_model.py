@@ -12,7 +12,7 @@ class CustomerModel(BaseModel):
     name: str = Field(...)
     email: Optional[EmailStr] = Field(...)
     phone_number: str = Field(...)
-    address: Optional[str] = Field(default=None)
+    address: Optional[str] = Field(...)
 
     class Config:
         allow_population_by_field_name = True
