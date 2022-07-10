@@ -30,7 +30,7 @@ class CustomerModel(BaseModel):
 
 
 class UpdateCustomerModel(BaseModel):
-    _MISSING = object()
+    _MISSING = '__MISSING__'
 
     cars: list[str] = Field(default=_MISSING)
     name: str = Field(default=_MISSING)
