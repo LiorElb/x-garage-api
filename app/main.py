@@ -9,12 +9,12 @@ from app.mongo_client import CUSTOMERS
 app = FastAPI()
 
 
-@app.get("/customers", response_model=list[CustomerModel])
+@app.get("/customers", response_model=list[CustomerModel], tags=['customers'])
 async def get_customers():
     return await CUSTOMERS.find().to_list(length=None)
 
 
-@app.post("/customers", response_model=CustomerModel, status_code=HTTPStatus.CREATED)
+@app.post("/customers", response_model=CustomerModel, status_code=HTTPStatus.CREATED, tags=['customers'])
 async def add_customer(customer: CustomerModel):
     await assert_cars_dont_already_exist(customer.cars)
 
@@ -23,7 +23,7 @@ async def add_customer(customer: CustomerModel):
     return await CUSTOMERS.find_one({"_id": new_customer.inserted_id})
 
 
-@app.get("/customers/{customer_id}", response_model=CustomerModel)
+@app.get("/customers/{customer_id}", response_model=CustomerModel, tags=['customers'])
 async def show_customer(customer_id: str):
     customer = await CUSTOMERS.find_one({"_id": customer_id})
 
@@ -33,7 +33,7 @@ async def show_customer(customer_id: str):
     return customer
 
 
-@app.put("/customers/{customer_id}", response_model=CustomerModel)
+@app.put("/customers/{customer_id}", response_model=CustomerModel,  tags=['customers'])
 async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body(...)):
     new_customer = customer.dict()
 
@@ -49,7 +49,7 @@ async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body
     return await CUSTOMERS.find_one({"_id": customer_id})
 
 
-@app.delete("/customers/{customer_id}")
+@app.delete("/customers/{customer_id}",  tags=['customers'])
 async def delete_customer(customer_id: str):
     result = await CUSTOMERS.delete_one({"_id": customer_id})
 
@@ -57,12 +57,12 @@ async def delete_customer(customer_id: str):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such customer")
 
 
-@app.get("/customers/{customer_id}/cars/", response_model=list[str])
+@app.get("/customers/{customer_id}/cars/", response_model=list[str], tags=['cars'])
 async def get_cars(customer_id: str):
     return await get_cars_by_id(customer_id)
 
 
-@app.post("/customers/{customer_id}/cars/{plate_number_to_add}", response_model=list[str])
+@app.post("/customers/{customer_id}/cars/{plate_number_to_add}", response_model=list[str], tags=['cars'])
 async def add_car(customer_id: str, plate_number_to_add: str):
     result = await CUSTOMERS.update_one(
         {"_id": customer_id},
@@ -75,7 +75,7 @@ async def add_car(customer_id: str, plate_number_to_add: str):
     return await get_cars_by_id(customer_id)
 
 
-@app.delete("/customers/{customer_id}/cars/{plate_number_to_delete}")
+@app.delete("/customers/{customer_id}/cars/{plate_number_to_delete}", tags=['cars'])
 async def remove_car(customer_id: str, plate_number_to_delete: str):
     result = await CUSTOMERS.update_one(
         {"_id": customer_id},
