@@ -22,7 +22,7 @@ class CarModel(BaseModel):
     kinuy_mishari: str | None = Field(default=None)
 
     @validator('license_plate_number')
-    def name_must_contain_space(cls, v: str):
+    def digits_only(cls, v: str):
         if not v.isdigit():
             raise ValueError('license plate number must be a number')
         return v.title()
@@ -68,3 +68,9 @@ class UpdateCarModel(BaseUpdateModel):
                 "code": "*3234",
             }
         }
+
+        @validator('license_plate_number')
+        def digits_only(cls, v: str):
+            if not v.isdigit():
+                raise ValueError('license plate number must be a number')
+            return v.title()
