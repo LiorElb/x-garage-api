@@ -16,7 +16,7 @@ async def get_customers():
 
 @app.post("/customers", response_model=CustomerModel, status_code=HTTPStatus.CREATED, tags=['customers'])
 async def add_customer(customer: CustomerModel):
-    await assert_cars_dont_already_exist(customer.cars)
+    await assert_cars_dont_belong_to_another_customer(customer.cars)
 
     customer = jsonable_encoder(customer)
     new_customer = await CUSTOMERS.insert_one(customer)
@@ -42,7 +42,7 @@ async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Customer {customer_id} not found")
 
     if 'cars' in new_customer:
-        await assert_cars_dont_already_exist(new_customer['cars'], existing['_id'])
+        await assert_cars_dont_belong_to_another_customer(new_customer['cars'], existing['_id'])
 
     await CUSTOMERS.update_one({"_id": customer_id}, {"$set": new_customer})
 
@@ -57,13 +57,13 @@ async def delete_customer(customer_id: str):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such customer")
 
 
-@app.get("/customers/{customer_id}/cars/", response_model=list[str], tags=['cars'])
-async def get_cars(customer_id: str):
+@app.get("/customers/{customer_id}/cars/", response_model=list[str], tags=['customers'])
+async def get_cars_for_customer(customer_id: str):
     return await get_cars_by_id(customer_id)
 
 
-@app.post("/customers/{customer_id}/cars/{plate_number_to_add}", response_model=list[str], tags=['cars'])
-async def add_car(customer_id: str, plate_number_to_add: str):
+@app.post("/customers/{customer_id}/cars/{plate_number_to_add}", response_model=list[str], tags=['customers'])
+async def add_car_to_customer(customer_id: str, plate_number_to_add: str):
     result = await CUSTOMERS.update_one(
         {"_id": customer_id},
         update={"$addToSet": {"cars": plate_number_to_add}}
@@ -75,8 +75,8 @@ async def add_car(customer_id: str, plate_number_to_add: str):
     return await get_cars_by_id(customer_id)
 
 
-@app.delete("/customers/{customer_id}/cars/{plate_number_to_delete}", tags=['cars'])
-async def remove_car(customer_id: str, plate_number_to_delete: str):
+@app.delete("/customers/{customer_id}/cars/{plate_number_to_delete}", tags=['customers'])
+async def remove_car_for_customer(customer_id: str, plate_number_to_delete: str):
     result = await CUSTOMERS.update_one(
         {"_id": customer_id},
         update={"$pull": {"cars": plate_number_to_delete}}
@@ -88,7 +88,7 @@ async def remove_car(customer_id: str, plate_number_to_delete: str):
     return await get_cars_by_id(customer_id)
 
 
-async def assert_cars_dont_already_exist(license_plate_numbers: list[str], allowed_id: str = None) -> None:
+async def assert_cars_dont_belong_to_another_customer(license_plate_numbers: list[str], allowed_id: str = None) -> None:
     existing = await CUSTOMERS.find_one(
         {"cars": {"$in": license_plate_numbers},
          "_id": {"$ne": allowed_id}}
