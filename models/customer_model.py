@@ -21,7 +21,7 @@ class CustomerModel(BaseModel):
         }
         schema_extra = {
             "example": {
-                "cars": ["123-12-123", "12-123-12"],
+                "cars": ["12312123", "1212312"],
                 "name": "John Doe",
                 "email": "jdoe@example.com",
                 "phone_number": "054-3532312",
@@ -45,7 +45,7 @@ class UpdateCustomerModel(BaseUpdateModel):
         }
         schema_extra = {
             "example": {
-                "cars": ["123-12-123", "12-123-12"],
+                "cars": ["12312123", "1212312"],
                 "name": "John Doe",
                 "email": "jdoe@example.com",
                 "phone_number": "054-3532312",

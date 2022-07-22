@@ -1,5 +1,5 @@
 from bson import ObjectId
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, validator
 
 from base_update_model import BaseUpdateModel, MISSING
 from pyobjectid import PyObjectId
@@ -21,6 +21,12 @@ class CarModel(BaseModel):
     sug_delek_nm: str | None = Field(default=None)
     kinuy_mishari: str | None = Field(default=None)
 
+    @validator('license_plate_number')
+    def name_must_contain_space(cls, v: str):
+        if not v.isdigit():
+            raise ValueError('license plate number must be a number')
+        return v.title()
+
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
@@ -29,7 +35,7 @@ class CarModel(BaseModel):
         }
         schema_extra = {
             "example": {
-                "license_plate_number": "11-111-11",
+                "license_plate_number": "1111111",
                 "code": "*1234",
                 "mispar_rechev": 2117772,
                 "tozeret_nm": "סאנגיונג ד.קור",
