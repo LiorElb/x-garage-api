@@ -1,8 +1,8 @@
 from bson import ObjectId
-from pydantic import BaseModel, Field, EmailStr, validator
+from pydantic import BaseModel, Field, validator
 
-from base_update_model import BaseUpdateModel, MISSING
-from pyobjectid import PyObjectId
+from models.base_update_model import BaseUpdateModel, MISSING
+from models.pyobjectid import PyObjectId
 
 
 class CarModel(BaseModel):
@@ -37,18 +37,18 @@ class CarModel(BaseModel):
             "example": {
                 "license_plate_number": "1111111",
                 "code": "*1234",
-                "mispar_rechev": 2117772,
-                "tozeret_nm": "סאנגיונג ד.קור",
-                "shnat_yitzur": 2010,
-                "degem_manoa": "665 וברוט",
-                "tokef_dt": "2023-06-21T00:00:00",
-                "baalut": "פרטי",
-                "misgeret": "KPTN0B1FSAP059254",
-                "tzeva_rechev": "אפור",
-                "zmig_kidmi": "215/65R16",
-                "zmig_ahori": "215/65R16",
-                "sug_delek_nm": "דיזל",
-                "kinuy_mishari": "RODIUS",
+                # "mispar_rechev": 2117772,
+                # "tozeret_nm": "סאנגיונג ד.קור",
+                # "shnat_yitzur": 2010,
+                # "degem_manoa": "665 וברוט",
+                # "tokef_dt": "2023-06-21T00:00:00",
+                # "baalut": "פרטי",
+                # "misgeret": "KPTN0B1FSAP059254",
+                # "tzeva_rechev": "אפור",
+                # "zmig_kidmi": "215/65R16",
+                # "zmig_ahori": "215/65R16",
+                # "sug_delek_nm": "דיזל",
+                # "kinuy_mishari": "RODIUS",
             }
         }
 
