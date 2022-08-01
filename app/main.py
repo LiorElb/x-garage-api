@@ -3,11 +3,14 @@ from http import HTTPStatus
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.encoders import jsonable_encoder
 
+from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS
+from app.mongo_client import CUSTOMERS, CARS
 
 app = FastAPI()
 
+
+# /customers
 
 @app.get("/customers", response_model=list[CustomerModel], tags=['customers'])
 async def get_customers():
@@ -33,7 +36,7 @@ async def show_customer(customer_id: str):
     return customer
 
 
-@app.put("/customers/{customer_id}", response_model=CustomerModel,  tags=['customers'])
+@app.put("/customers/{customer_id}", response_model=CustomerModel, tags=['customers'])
 async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body(...)):
     new_customer = customer.dict()
 
@@ -49,7 +52,7 @@ async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body
     return await CUSTOMERS.find_one({"_id": customer_id})
 
 
-@app.delete("/customers/{customer_id}",  tags=['customers'])
+@app.delete("/customers/{customer_id}", tags=['customers'])
 async def delete_customer(customer_id: str):
     result = await CUSTOMERS.delete_one({"_id": customer_id})
 
@@ -104,3 +107,54 @@ async def get_cars_by_id(customer_id) -> list[str]:
         return customer['cars']
     except TypeError:  # NoneType
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such customer")
+
+
+# /cars
+
+@app.get("/cars", response_model=list[CarModel], tags=['cars'])
+async def get_cars():
+    return await CARS.find().to_list(length=None)
+
+
+@app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
+async def add_car(car: CarModel):
+    car = jsonable_encoder(car)
+    new = await CARS.insert_one(car)
+    return await CARS.find_one({"_id": new.inserted_id})
+
+
+@app.get("/cars/{license_plate_number}", response_model=CarModel, tags=['cars'])
+async def show_car(license_plate_number: str):
+    car = await CARS.find_one({"license_plate_number": license_plate_number})
+
+    if car is None:
+        raise HTTPException(status_code=404, detail=f"Car {license_plate_number} not found")
+
+    return car
+
+
+@app.put("/cars/{license_plate_number}", response_model=CarModel, tags=['cars'])
+async def update_car(license_plate_number: str, car: UpdateCarModel = Body(...)):
+    new_car = car.dict()
+
+    existing = await CARS.find_one(
+        {"license_plate_number": license_plate_number},
+        projection={"_id": 0, "license_plate_number": 1}
+    )
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Car {license_plate_number} not found")
+
+    await CARS.update_one({"license_plate_number": license_plate_number}, {"$set": new_car})
+
+    return await CARS.find_one({"license_plate_number": license_plate_number})
+
+
+@app.delete("/cars/{license_plate_number}", tags=['cars'])
+async def delete_car(license_plate_number: str):
+    result = await CARS.delete_one({"license_plate_number": license_plate_number})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such car")
+
+    if result.deleted_count != 1:
+        raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Deleted more than one car!")
