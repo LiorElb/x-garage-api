@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException, Body, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
-from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
@@ -15,14 +15,14 @@ origins = [
     "http://localhost:3000",
     "localhost:3000"
 ]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
+#
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"]
+# )
 
 
 # /customers
@@ -129,6 +129,11 @@ async def get_cars_by_id(customer_id) -> list[str]:
 @app.get("/cars", response_model=list[CarModel], tags=['cars'])
 async def get_cars():
     return await CARS.find().to_list(length=None)
+
+
+@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
+async def get_car_types():
+    return await CARS.distinct("tozeret_nm")
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
