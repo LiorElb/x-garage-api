@@ -6,7 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS
+from app.mongo_client import CUSTOMERS, CARS, ITEMS
+from models.item_model import ItemModel, UpdateItemModel
 
 app = FastAPI()
 
@@ -172,3 +173,48 @@ async def delete_car(license_plate_number: str):
 
     if result.deleted_count != 1:
         raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Deleted more than one car!")
+
+
+# /items
+
+@app.get("/items", response_model=list[ItemModel], tags=['items'])
+async def get_items():
+    return await ITEMS.find().to_list(length=None)
+
+
+@app.post("/items", response_model=ItemModel, status_code=HTTPStatus.CREATED, tags=['items'])
+async def add_item(item: ItemModel):
+    item = jsonable_encoder(item)
+    new = await ITEMS.insert_one(item)
+    return await ITEMS.find_one({"_id": new.inserted_id})
+
+
+@app.get("/items/{item_id}", response_model=ItemModel, tags=['items'])
+async def show_item(item_id: str):
+    item = await ITEMS.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+
+    return item
+
+
+@app.put("/items/{item_id}", response_model=ItemModel, tags=['items'])
+async def update_item(item_id: str, item: UpdateItemModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Item {item_id} not found")
+
+    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await ITEMS.find_one({"_id": item_id})
+
+
+@app.delete("/items/{item_id}", tags=['items'])
+async def delete_item(item_id: str):
+    result = await ITEMS.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")

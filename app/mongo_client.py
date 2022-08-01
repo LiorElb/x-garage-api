@@ -10,3 +10,4 @@ if not all((MONGO_HOST, MONGO_PORT)):
 client = motor.AsyncIOMotorClient(f'mongodb://{MONGO_HOST}:{MONGO_PORT}/')
 CUSTOMERS = client['main']['customers']
 CARS = client['main']['cars']
+ITEMS = client['main']['items']
