@@ -1,13 +1,27 @@
 from http import HTTPStatus
 
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException, Body, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
+from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from app.mongo_client import CUSTOMERS, CARS
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 # /customers
@@ -134,7 +148,7 @@ async def show_car(license_plate_number: str):
 
 
 @app.put("/cars/{license_plate_number}", response_model=CarModel, tags=['cars'])
-async def update_car(license_plate_number: str, car: UpdateCarModel = Body(...)):
+async def update_car(license_plate_number: str, bg_tasks: BackgroundTasks, car: UpdateCarModel = Body(...)):
     new_car = car.dict()
 
     existing = await CARS.find_one(
