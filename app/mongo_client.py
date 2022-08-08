@@ -1,13 +1,12 @@
 import os
 import motor.motor_asyncio as motor
 
-MONGO_HOST = os.getenv('GARAGE_MONGO_HOST')
-MONGO_PORT = os.getenv('GARAGE_MONGO_PORT')
+MONGO_CONNECTION_STR = os.getenv('GARAGE_MONGO_CONNECTION_STR')
 
-if not all((MONGO_HOST, MONGO_PORT)):
-    raise EnvironmentError("Please define GARAGE_MONGO_HOST and GARAGE_MONGO_PORT in env")
+if not MONGO_CONNECTION_STR:
+    raise EnvironmentError("Please define GARAGE_MONGO_CONNECTION_STR in env")
 
-client = motor.AsyncIOMotorClient(f'mongodb://{MONGO_HOST}:{MONGO_PORT}/')
+client = motor.AsyncIOMotorClient(MONGO_CONNECTION_STR)
 CUSTOMERS = client['main']['customers']
 CARS = client['main']['cars']
 ITEMS = client['main']['items']

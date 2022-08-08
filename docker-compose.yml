@@ -3,10 +3,9 @@ services:
   garage-api:
     image: liorelb/x-garage-api
     environment:
-      GARAGE_MONGO_HOST: mongo
-      GARAGE_MONGO_PORT: 27017
+      GARAGE_MONGO_CONNECTION_STR: "mongodb://mongo:27017"
     ports:
-      - "80:80"
+      - "8000:8000"
   mongo:
     image: mongo
     ports:
