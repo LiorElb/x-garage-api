@@ -10,11 +10,10 @@ from models.customer_model import CustomerModel, UpdateCustomerModel
 from app.mongo_client import CUSTOMERS, CARS, ITEMS
 from models.item_model import ItemModel, UpdateItemModel
 
-app = FastAPI()
+app = FastAPI(version="1.0.0")
 
 origins = [
-    "http://localhost:3000",
-    "localhost:3000"
+    "*"
 ]
 
 app.add_middleware(
