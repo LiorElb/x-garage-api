@@ -1,8 +1,9 @@
 from http import HTTPStatus
 
+import aiohttp
 from fastapi import FastAPI, HTTPException, Body, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
-# from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
@@ -15,14 +16,14 @@ origins = [
     "http://localhost:3000",
     "localhost:3000"
 ]
-#
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"]
-# )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 # /customers
@@ -137,10 +138,21 @@ async def get_car_types():
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
-async def add_car(car: CarModel):
+async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
     car = jsonable_encoder(car)
     new = await CARS.insert_one(car)
+    # bg_tasks.add_task(enrich_car, new.inserted_id)
     return await CARS.find_one({"_id": new.inserted_id})
+
+
+async def enrich_car(car_id: str):
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://data.gov.il/api/3/action/datastore_search') as response:
+            print("Status:", response.status)
+            print("Content-type:", response.headers['content-type'])
+
+            html = await response.text()
+            print("Body:", html[:15], "...")
 
 
 @app.get("/cars/{license_plate_number}", response_model=CarModel, tags=['cars'])
