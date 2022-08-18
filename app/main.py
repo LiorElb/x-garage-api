@@ -13,7 +13,7 @@ from models.item_model import ItemModel, UpdateItemModel
 app = FastAPI(version="1.0.1")
 
 origins = [
-    "*"    # TODO: Authentication - make sure its safe with chosen auth method
+    "*"  # TODO: Authentication - make sure its safe with chosen auth method
 ]
 
 app.add_middleware(
@@ -140,18 +140,38 @@ async def get_car_types():
 async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
     car = jsonable_encoder(car)
     new = await CARS.insert_one(car)
-    # bg_tasks.add_task(enrich_car, new.inserted_id)
-    return await CARS.find_one({"_id": new.inserted_id})
+    new_car = await CARS.find_one(
+        {"_id": new.inserted_id},
+        projection={"license_plate_number": 1}
+    )
+    bg_tasks.add_task(enrich_car, new.inserted_id, new_car['license_plate_number'])
+    return new_car
 
 
-async def enrich_car(car_id: str):
-    async with aiohttp.ClientSession() as session:
-        async with session.get('https://data.gov.il/api/3/action/datastore_search') as response:
-            print("Status:", response.status)
-            print("Content-type:", response.headers['content-type'])
+async def enrich_car(car_oid: str, license_plate_number: str):
+    result = await get_car_info_from_gov_db(license_plate_number)
+    await CARS.update_one({"_id": car_oid}, {"$set": {"government_data": result}})
 
-            html = await response.text()
-            print("Body:", html[:15], "...")
+
+async def get_car_info_from_gov_db(license_plate_number):
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
+        async with session.post(
+                url='https://data.gov.il/api/3/action/datastore_search',
+                json={
+                    "resource_id": "053cea08-09bc-40ec-8f7a-156f0677aff3",
+                    "limit": 2,
+                    "filters": {
+                        "mispar_rechev": [license_plate_number]
+                    },
+                    "offset": 0
+                }
+        ) as response:
+            records = (await response.json())['result']['records']
+            try:
+                return records[0]
+            except IndexError:
+                print(f"Car not found in gov db {license_plate_number}")
+                return None
 
 
 @app.get("/cars/{license_plate_number}", response_model=CarModel, tags=['cars'])
