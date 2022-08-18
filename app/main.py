@@ -10,7 +10,7 @@ from models.customer_model import CustomerModel, UpdateCustomerModel
 from app.mongo_client import CUSTOMERS, CARS, ITEMS
 from models.item_model import ItemModel, UpdateItemModel
 
-app = FastAPI(version="1.0.1")
+app = FastAPI(version="0.4.0")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
