@@ -10,7 +10,7 @@ from models.customer_model import CustomerModel, UpdateCustomerModel
 from app.mongo_client import CUSTOMERS, CARS, ITEMS
 from models.item_model import ItemModel, UpdateItemModel
 
-app = FastAPI(version="0.4.0")
+app = FastAPI(version="0.4.1")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -133,7 +133,7 @@ async def get_cars():
 
 @app.get("/cars/types", response_model=list[str | None], tags=['cars'])
 async def get_car_types():
-    return await CARS.distinct("tozeret_nm")
+    return await CARS.distinct("government_data.tozeret_nm")
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
