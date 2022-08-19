@@ -10,7 +10,7 @@ from models.customer_model import CustomerModel, UpdateCustomerModel
 from app.mongo_client import CUSTOMERS, CARS, ITEMS
 from models.item_model import ItemModel, UpdateItemModel
 
-app = FastAPI(version="0.4.1")
+app = FastAPI(version="0.4.2")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -153,22 +153,44 @@ async def enrich_car(car_oid: str, license_plate_number: str):
     await CARS.update_one({"_id": car_oid}, {"$set": {"government_data": result}})
 
 
-async def get_car_info_from_gov_db(license_plate_number):
+async def get_car_info_from_gov_db(license_plate_number: str):
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
         async with session.post(
                 url='https://data.gov.il/api/3/action/datastore_search',
                 json={
                     "resource_id": "053cea08-09bc-40ec-8f7a-156f0677aff3",
-                    "limit": 2,
                     "filters": {
                         "mispar_rechev": [license_plate_number]
                     },
+                    "limit": 2,
                     "offset": 0
                 }
         ) as response:
             records = (await response.json())['result']['records']
             try:
-                return records[0]
+                result = records[0]
+                async with session.post(
+                        url='https://data.gov.il/api/3/action/datastore_search',
+                        json={
+                            "resource_id": "5e87a7a1-2f6f-41c1-8aec-7216d52a6cf6",
+                            "filters": {
+                                "tozeret_cd": [
+                                    str(result['tozeret_cd']).zfill(4)
+                                ],
+                                "degem_cd": [
+                                    str(result['degem_cd']).zfill(4)
+                                ],
+                                "shnat_yitzur": [
+                                    str(result['shnat_yitzur'])
+                                ]
+                            },
+                            "limit": 2,
+                            "offset": 0
+                        }
+                ) as r:
+                    final = (await r.json())['result']['records']
+                    result.update(final[0])
+                    return result
             except IndexError:
                 print(f"Car not found in gov db {license_plate_number}")
                 return None
