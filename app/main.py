@@ -10,7 +10,7 @@ from models.customer_model import CustomerModel, UpdateCustomerModel
 from app.mongo_client import CUSTOMERS, CARS, ITEMS
 from models.item_model import ItemModel, UpdateItemModel
 
-app = FastAPI(version="0.4.3")
+app = FastAPI(version="0.4.4")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -189,8 +189,8 @@ async def get_car_info_from_gov_db(license_plate_number: str):
                         }
                 ) as r:
                     final = (await r.json())['result']['records']
-                    result.update(final[0])
-                    return result
+                    final[0].update(result)
+                    return final[0]
             except IndexError:
                 print(f"Car not found in gov db {license_plate_number}")
                 return None
