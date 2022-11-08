@@ -5,9 +5,8 @@ from models.base_update_model import BaseUpdateModel, MISSING
 from models.pyobjectid import PyObjectId
 
 
-class ItemModel(BaseModel):
+class UsedModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    barcode: str | None = Field(default=None)
     name: str = Field(...)
     category: str = Field(...)
     notes: str | None = Field(default=None)
@@ -23,7 +22,6 @@ class ItemModel(BaseModel):
         }
         schema_extra = {
             "example": {
-                "barcode": "1111111",
                 "name": "hammer",
                 "category": "mechanic",
                 "notes": "very heavy",
@@ -34,11 +32,11 @@ class ItemModel(BaseModel):
         }
 
 
-class UpdateItemModel(BaseUpdateModel):
-    barcode: str | None = Field(default=MISSING)
+class UpdateUsedModel(BaseUpdateModel):
     name: str = Field(default=MISSING)
     category: str = Field(default=MISSING)
     notes: str | None = Field(default=MISSING)
+    description: str | None = Field(default=MISSING)
     amount_in_stock: int = Field(default=MISSING)
     car_types: list[str] | None = Field(default=MISSING)
     location: str | None = Field(default=MISSING)
@@ -50,7 +48,6 @@ class UpdateItemModel(BaseUpdateModel):
         }
         schema_extra = {
             "example": {
-                "barcode": "1111111",
                 "name": "hammer",
                 "category": "mechanic",
                 "notes": "very heavy",

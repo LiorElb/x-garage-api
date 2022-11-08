@@ -9,8 +9,10 @@ from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from app.mongo_client import CUSTOMERS, CARS, ITEMS
 from models.item_model import ItemModel, UpdateItemModel
+from models.used_model import UsedModel, UpdateUsedModel
+from models.tipulim_modal import TipulModel,UpdateTipulModel
 
-app = FastAPI(version="0.4.4")
+app = FastAPI(version="0.5.5")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -272,6 +274,95 @@ async def update_item(item_id: str, item: UpdateItemModel = Body(...)):
 
 @app.delete("/items/{item_id}", tags=['items'])
 async def delete_item(item_id: str):
+    result = await ITEMS.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")
+
+# /usedItems
+
+@app.get("/used", response_model=list[UsedModel], tags=['used'])
+async def get_used():
+    return await ITEMS.find().to_list(length=None)
+
+
+@app.post("/used", response_model=UsedModel, status_code=HTTPStatus.CREATED, tags=['used'])
+async def add_used(item: UsedModel):
+    item = jsonable_encoder(item)
+    new = await ITEMS.insert_one(item)
+    return await ITEMS.find_one({"_id": new.inserted_id})
+
+
+@app.get("/used/{item_id}", response_model=UsedModel, tags=['used'])
+async def show_used(item_id: str):
+    item = await ITEMS.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(status_code=404, detail=f"Used {item_id} not found")
+
+    return item
+
+
+@app.put("/used/{item_id}", response_model=UsedModel, tags=['used'])
+async def update_used(item_id: str, item: UpdateUsedModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Used {item_id} not found")
+
+    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await ITEMS.find_one({"_id": item_id})
+
+
+@app.delete("/items/{item_id}", tags=['items'])
+async def delete_used(item_id: str):
+    result = await ITEMS.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")
+
+
+# /tipulim
+
+@app.get("/tipul", response_model=list[TipulModel], tags=['tipul'])
+async def get_tipul():
+    return await ITEMS.find().to_list(length=None)
+
+
+@app.post("/tipul", response_model=TipulModel, status_code=HTTPStatus.CREATED, tags=['tipul'])
+async def add_tipul(item: TipulModel):
+    item = jsonable_encoder(item)
+    new = await ITEMS.insert_one(item)
+    return await ITEMS.find_one({"_id": new.inserted_id})
+
+
+@app.get("/tipul/{item_id}", response_model=TipulModel, tags=['tipul'])
+async def show_tipul(item_id: str):
+    item = await ITEMS.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(status_code=404, detail=f"Tipul {item_id} not found")
+
+    return item
+
+
+@app.put("/tipul/{item_id}", response_model=TipulModel, tags=['tipul'])
+async def update_tipul(item_id: str, item: UpdateTipulModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Tipul {item_id} not found")
+
+    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await ITEMS.find_one({"_id": item_id})
+
+
+@app.delete("/tipul/{item_id}", tags=['tipul'])
+async def delete_tipul(item_id: str):
     result = await ITEMS.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:

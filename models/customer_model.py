@@ -12,6 +12,7 @@ class CustomerModel(BaseModel):
     phone_number: str = Field(...)
     email: EmailStr | None = Field(default=None)
     address: str | None = Field(default=None)
+    note: str | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
@@ -26,6 +27,7 @@ class CustomerModel(BaseModel):
                 "email": "jdoe@example.com",
                 "phone_number": "054-3532312",
                 "address": "123 Street, NYC",
+                "note": "screeming bitch",
             }
         }
 
@@ -36,6 +38,7 @@ class UpdateCustomerModel(BaseUpdateModel):
     phone_number: str = Field(default=MISSING)
     email: EmailStr | None = Field(default=MISSING)
     address: str | None = Field(default=MISSING)
+    note: str | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
@@ -50,5 +53,6 @@ class UpdateCustomerModel(BaseUpdateModel):
                 "email": "jdoe@example.com",
                 "phone_number": "054-3532312",
                 "address": "123 Street, NYC",
+                "note": "screeming bitch",
             }
         }

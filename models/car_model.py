@@ -9,6 +9,7 @@ class CarModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     license_plate_number: str = Field(...)
     code: str | None = Field(default=None)
+    note: str | None = Field(default=None)
     government_data: dict | None = Field(default=None)
 
     @validator('license_plate_number')
@@ -26,7 +27,8 @@ class CarModel(BaseModel):
         schema_extra = {
             "example": {
                 "license_plate_number": "1111111",
-                "code": "*1234",
+                "code": "*1234", 
+                "note": "the engine will die soon",
                 "government_data": {
                     "mispar_rechev": 2117772,
                     "tozeret_nm": "סאנגיונג ד.קור",
@@ -48,6 +50,7 @@ class CarModel(BaseModel):
 class UpdateCarModel(BaseUpdateModel):
     license_plate_number: str | None = Field(default=MISSING)
     code: str | None = Field(default=MISSING)
+    note: str | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
@@ -58,6 +61,7 @@ class UpdateCarModel(BaseUpdateModel):
             "example": {
                 "license_plate_number": "11-111-11",
                 "code": "*3234",
+                "note": "the engine will die soon",
             }
         }
 
