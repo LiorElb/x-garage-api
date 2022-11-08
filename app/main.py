@@ -316,7 +316,7 @@ async def update_used(item_id: str, item: UpdateUsedModel = Body(...)):
     return await ITEMS.find_one({"_id": item_id})
 
 
-@app.delete("/items/{item_id}", tags=['items'])
+@app.delete("/used/{item_id}", tags=['used'])
 async def delete_used(item_id: str):
     result = await ITEMS.delete_one({"_id": item_id})
 

@@ -10,3 +10,5 @@ client = motor.AsyncIOMotorClient(MONGO_CONNECTION_STR)
 CUSTOMERS = client['main']['customers']
 CARS = client['main']['cars']
 ITEMS = client['main']['items']
+Used = client['main']['used']
+Tipul = client['main']['tipul']
