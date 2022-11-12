@@ -7,13 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, ITEMS
+from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repair
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
-from models.tipulim_modal import TipulModel,UpdateTipulModel
-from models.repair_modal import RepairModel,UpdateRepairModel
+from models.tipulim_modal import TipulModel, UpdateTipulModel
+from models.repair_model import RepairModel, UpdateRepairModel
 
-app = FastAPI(version="0.5.5")
+app = FastAPI(version="0.5.6")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -49,7 +49,8 @@ async def show_customer(customer_id: str):
     customer = await CUSTOMERS.find_one({"_id": customer_id})
 
     if customer is None:
-        raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Customer {customer_id} not found")
 
     return customer
 
@@ -60,7 +61,8 @@ async def update_customer(customer_id: str, customer: UpdateCustomerModel = Body
 
     existing = await CUSTOMERS.find_one({"_id": customer_id}, projection={"_id": 1})
     if existing is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Customer {customer_id} not found")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"Customer {customer_id} not found")
 
     if 'cars' in new_customer:
         await assert_cars_dont_belong_to_another_customer(new_customer['cars'], existing['_id'])
@@ -75,7 +77,8 @@ async def delete_customer(customer_id: str):
     result = await CUSTOMERS.delete_one({"_id": customer_id})
 
     if result.deleted_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such customer")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such customer")
 
 
 @app.get("/customers/{customer_id}/cars/", response_model=list[str], tags=['customers'])
@@ -91,7 +94,8 @@ async def add_car_to_customer(customer_id: str, plate_number_to_add: str):
     )
 
     if result.modified_count == 0:
-        raise HTTPException(status_code=HTTPStatus.CONFLICT, detail='Car already exists')
+        raise HTTPException(status_code=HTTPStatus.CONFLICT,
+                            detail='Car already exists')
 
     return await get_cars_by_id(customer_id)
 
@@ -104,7 +108,8 @@ async def remove_car_for_customer(customer_id: str, plate_number_to_delete: str)
     )
 
     if result.modified_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='No such car')
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='No such car')
 
     return await get_cars_by_id(customer_id)
 
@@ -116,7 +121,8 @@ async def assert_cars_dont_belong_to_another_customer(license_plate_numbers: lis
     )
 
     if existing is not None:
-        raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="license number already exists")
+        raise HTTPException(status_code=HTTPStatus.CONFLICT,
+                            detail="license number already exists")
 
 
 async def get_cars_by_id(customer_id) -> list[str]:
@@ -124,7 +130,8 @@ async def get_cars_by_id(customer_id) -> list[str]:
     try:
         return customer['cars']
     except TypeError:  # NoneType
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such customer")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such customer")
 
 
 # /cars
@@ -147,7 +154,8 @@ async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
         {"_id": new.inserted_id},
         projection={"license_plate_number": 1}
     )
-    bg_tasks.add_task(enrich_car, new.inserted_id, new_car['license_plate_number'])
+    bg_tasks.add_task(enrich_car, new.inserted_id,
+                      new_car['license_plate_number'])
     return new_car
 
 
@@ -204,7 +212,8 @@ async def show_car(license_plate_number: str):
     car = await CARS.find_one({"license_plate_number": license_plate_number})
 
     if car is None:
-        raise HTTPException(status_code=404, detail=f"Car {license_plate_number} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Car {license_plate_number} not found")
 
     return car
 
@@ -218,7 +227,8 @@ async def update_car(license_plate_number: str, bg_tasks: BackgroundTasks, car: 
         projection={"_id": 0, "license_plate_number": 1}
     )
     if existing is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Car {license_plate_number} not found")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"Car {license_plate_number} not found")
 
     await CARS.update_one({"license_plate_number": license_plate_number}, {"$set": new_car})
 
@@ -230,10 +240,12 @@ async def delete_car(license_plate_number: str):
     result = await CARS.delete_one({"license_plate_number": license_plate_number})
 
     if result.deleted_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such car")
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="No such car")
 
     if result.deleted_count != 1:
-        raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Deleted more than one car!")
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Deleted more than one car!")
 
 
 # /items
@@ -255,7 +267,8 @@ async def show_item(item_id: str):
     item = await ITEMS.find_one({"_id": item_id})
 
     if item is None:
-        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Item {item_id} not found")
 
     return item
 
@@ -266,7 +279,8 @@ async def update_item(item_id: str, item: UpdateItemModel = Body(...)):
 
     existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Item {item_id} not found")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"Item {item_id} not found")
 
     await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
 
@@ -278,28 +292,31 @@ async def delete_item(item_id: str):
     result = await ITEMS.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
 
 # /usedItems
 
+
 @app.get("/used", response_model=list[UsedModel], tags=['used'])
 async def get_used():
-    return await ITEMS.find().to_list(length=None)
+    return await Used.find().to_list(length=None)
 
 
 @app.post("/used", response_model=UsedModel, status_code=HTTPStatus.CREATED, tags=['used'])
 async def add_used(item: UsedModel):
     item = jsonable_encoder(item)
-    new = await ITEMS.insert_one(item)
-    return await ITEMS.find_one({"_id": new.inserted_id})
+    new = await Used.insert_one(item)
+    return await Used.find_one({"_id": new.inserted_id})
 
 
 @app.get("/used/{item_id}", response_model=UsedModel, tags=['used'])
 async def show_used(item_id: str):
-    item = await ITEMS.find_one({"_id": item_id})
+    item = await Used.find_one({"_id": item_id})
 
     if item is None:
-        raise HTTPException(status_code=404, detail=f"Used {item_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Used {item_id} not found")
 
     return item
 
@@ -308,9 +325,10 @@ async def show_used(item_id: str):
 async def update_used(item_id: str, item: UpdateUsedModel = Body(...)):
     new_item = item.dict()
 
-    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    existing = await Used.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Used {item_id} not found")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"Used {item_id} not found")
 
     await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
 
@@ -319,32 +337,34 @@ async def update_used(item_id: str, item: UpdateUsedModel = Body(...)):
 
 @app.delete("/used/{item_id}", tags=['used'])
 async def delete_used(item_id: str):
-    result = await ITEMS.delete_one({"_id": item_id})
+    result = await Used.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
 
 
 # /tipulim
 
 @app.get("/tipul", response_model=list[TipulModel], tags=['tipul'])
 async def get_tipul():
-    return await ITEMS.find().to_list(length=None)
+    return await Tipul.find().to_list(length=None)
 
 
 @app.post("/tipul", response_model=TipulModel, status_code=HTTPStatus.CREATED, tags=['tipul'])
 async def add_tipul(item: TipulModel):
     item = jsonable_encoder(item)
-    new = await ITEMS.insert_one(item)
-    return await ITEMS.find_one({"_id": new.inserted_id})
+    new = await Tipul.insert_one(item)
+    return await Tipul.find_one({"_id": new.inserted_id})
 
 
 @app.get("/tipul/{item_id}", response_model=TipulModel, tags=['tipul'])
 async def show_tipul(item_id: str):
-    item = await ITEMS.find_one({"_id": item_id})
+    item = await Tipul.find_one({"_id": item_id})
 
     if item is None:
-        raise HTTPException(status_code=404, detail=f"Tipul {item_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Tipul {item_id} not found")
 
     return item
 
@@ -353,42 +373,46 @@ async def show_tipul(item_id: str):
 async def update_tipul(item_id: str, item: UpdateTipulModel = Body(...)):
     new_item = item.dict()
 
-    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    existing = await Tipul.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Tipul {item_id} not found")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"Tipul {item_id} not found")
 
-    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+    await Tipul.update_one({"_id": item_id}, {"$set": new_item})
 
-    return await ITEMS.find_one({"_id": item_id})
+    return await Tipul.find_one({"_id": item_id})
 
 
 @app.delete("/tipul/{item_id}", tags=['tipul'])
 async def delete_tipul(item_id: str):
-    result = await ITEMS.delete_one({"_id": item_id})
+    result = await Tipul.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
 
 # /Repairs
 
+
 @app.get("/repair", response_model=list[RepairModel], tags=['repair'])
 async def get_repair():
-    return await ITEMS.find().to_list(length=None)
+    return await Repair.find().to_list(length=None)
 
 
 @app.post("/repair", response_model=RepairModel, status_code=HTTPStatus.CREATED, tags=['repair'])
 async def add_repair(item: RepairModel):
     item = jsonable_encoder(item)
-    new = await ITEMS.insert_one(item)
-    return await ITEMS.find_one({"_id": new.inserted_id})
+    new = await Repair.insert_one(item)
+    return await Repair.find_one({"_id": new.inserted_id})
 
 
 @app.get("/repair/{item_id}", response_model=RepairModel, tags=['repair'])
 async def show_repair(item_id: str):
-    item = await ITEMS.find_one({"_id": item_id})
+    item = await Repair.find_one({"_id": item_id})
 
     if item is None:
-        raise HTTPException(status_code=404, detail=f"repair {item_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"repair {item_id} not found")
 
     return item
 
@@ -397,18 +421,20 @@ async def show_repair(item_id: str):
 async def update_repair(item_id: str, item: UpdateRepairModel = Body(...)):
     new_item = item.dict()
 
-    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    existing = await Repair.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"repair {item_id} not found")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"repair {item_id} not found")
 
-    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+    await Repair.update_one({"_id": item_id}, {"$set": new_item})
 
-    return await ITEMS.find_one({"_id": item_id})
+    return await Repair.find_one({"_id": item_id})
 
 
 @app.delete("/repair/{item_id}", tags=['repair'])
 async def delete_repair(item_id: str):
-    result = await ITEMS.delete_one({"_id": item_id})
+    result = await Repair.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
