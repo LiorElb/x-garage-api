@@ -11,6 +11,7 @@ from app.mongo_client import CUSTOMERS, CARS, ITEMS
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel,UpdateTipulModel
+from models.repair_modal import RepairModel,UpdateRepairModel
 
 app = FastAPI(version="0.5.5")
 
@@ -363,6 +364,50 @@ async def update_tipul(item_id: str, item: UpdateTipulModel = Body(...)):
 
 @app.delete("/tipul/{item_id}", tags=['tipul'])
 async def delete_tipul(item_id: str):
+    result = await ITEMS.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="No such item")
+
+# /Repairs
+
+@app.get("/repair", response_model=list[RepairModel], tags=['repair'])
+async def get_repair():
+    return await ITEMS.find().to_list(length=None)
+
+
+@app.post("/repair", response_model=RepairModel, status_code=HTTPStatus.CREATED, tags=['repair'])
+async def add_repair(item: RepairModel):
+    item = jsonable_encoder(item)
+    new = await ITEMS.insert_one(item)
+    return await ITEMS.find_one({"_id": new.inserted_id})
+
+
+@app.get("/repair/{item_id}", response_model=RepairModel, tags=['repair'])
+async def show_repair(item_id: str):
+    item = await ITEMS.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(status_code=404, detail=f"repair {item_id} not found")
+
+    return item
+
+
+@app.put("/repair/{item_id}", response_model=RepairModel, tags=['repair'])
+async def update_repair(item_id: str, item: UpdateRepairModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"repair {item_id} not found")
+
+    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await ITEMS.find_one({"_id": item_id})
+
+
+@app.delete("/repair/{item_id}", tags=['repair'])
+async def delete_repair(item_id: str):
     result = await ITEMS.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
