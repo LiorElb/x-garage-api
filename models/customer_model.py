@@ -9,8 +9,8 @@ class CustomerModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     cars: list[str] = Field(default_factory=list)
     name: str = Field(...)
-    phone_number: str = Field(...)
-    email: EmailStr | None = Field(default=None)
+    phone_number: str | None = Field(default=None)
+    email: str | None = Field(default=None)
     address: str | None = Field(default=None)
     note: str | None = Field(default=None)
 
@@ -33,10 +33,10 @@ class CustomerModel(BaseModel):
 
 
 class UpdateCustomerModel(BaseUpdateModel):
-    cars: list[str] = Field(default=MISSING)
-    name: str = Field(default=MISSING)
-    phone_number: str = Field(default=MISSING)
-    email: EmailStr | None = Field(default=MISSING)
+    cars: list[str] | None = Field(default=MISSING)
+    name: str | None = Field(default=MISSING)
+    phone_number: str | None = Field(default=MISSING)
+    email: str | None = Field(default=MISSING)
     address: str | None = Field(default=MISSING)
     note: str | None = Field(default=MISSING)
 
