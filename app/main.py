@@ -11,10 +11,10 @@ from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
-from models.repairss_model import RepairModel, UpdateRepairModel
+from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
 
-app = FastAPI(version="0.5.7")
+app = FastAPI(version="0.5.8")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
