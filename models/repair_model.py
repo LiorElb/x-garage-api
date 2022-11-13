@@ -7,7 +7,7 @@ from models.pyobjectid import PyObjectId
 class RepairModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     license_plate_number: str = Field(...)
-    area_num: int = Field(...)
+    area_id: str = Field(...)
     tipul:object | None = Field(default=None)
     time_stamp_start: str | None = Field(default=None)
     note: str | None = Field(default=None)
@@ -22,7 +22,7 @@ class RepairModel(BaseModel):
         schema_extra = {
             "example": {
                 "license_plate_number": ["12312123", "1212312"],
-                "area_num": "John Doe",
+                "area_id": "John Doe",
                 "tipul": "jdoe@example.com",
                 "time_stamp_start": "054-3532312",
                 "note": "screeming bitch",
@@ -33,7 +33,7 @@ class RepairModel(BaseModel):
 
 class UpdateRepairModel(BaseUpdateModel):
     tipul: object = Field(default=MISSING)
-    area_num: int = Field(default=MISSING)
+    area_id: str = Field(default=MISSING)
     time_stamp_end: str | None = Field(default=MISSING)
     note: str | None = Field(default=MISSING)
     rows: object | None = Field(default=MISSING)
@@ -47,7 +47,7 @@ class UpdateRepairModel(BaseUpdateModel):
         schema_extra = {
             "example": {
                 "license_plate_number": ["12312123", "1212312"],
-                "area_num": "John Doe",
+                "area_id": "John Doe",
                 "tipul": "jdoe@example.com",
                 "time_stamp_start": "054-3532312",
                 "note": "screeming bitch",
