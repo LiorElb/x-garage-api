@@ -7,13 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repair
+from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repair, Area
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.repair_model import RepairModel, UpdateRepairModel
+from models.area_model import AreaModel, UpdateAreaModel
 
-app = FastAPI(version="0.5.6")
+app = FastAPI(version="0.5.7")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -434,6 +435,55 @@ async def update_repair(item_id: str, item: UpdateRepairModel = Body(...)):
 @app.delete("/repair/{item_id}", tags=['repair'])
 async def delete_repair(item_id: str):
     result = await Repair.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
+
+# /area
+
+
+@app.get("/area", response_model=list[AreaModel], tags=['area'])
+async def get_area():
+    return await Area.find().to_list(length=None)
+
+
+@app.post("/area", response_model=AreaModel, status_code=HTTPStatus.CREATED, tags=['area'])
+async def add_area(item: AreaModel):
+    item = jsonable_encoder(item)
+    new = await Area.insert_one(item)
+    return await Area.find_one({"_id": new.inserted_id})
+
+
+@app.get("/area/{item_id}", response_model=AreaModel, tags=['area'])
+async def show_area(item_id: str):
+    item = await Area.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"area {item_id} not found")
+
+    return item
+
+
+@app.put("/area/{item_id}", response_model=AreaModel, tags=['area'])
+async def update_area(item_id: str, item: UpdateAreaModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await Area.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"area {item_id} not found")
+
+    await Area.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await Area.find_one({"_id": item_id})
+
+
+@app.delete("/area/{item_id}", tags=['area'])
+async def delete_area(item_id: str):
+    result = await Area.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
