@@ -1,4 +1,3 @@
-
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from models.pyobjectid import PyObjectId
@@ -21,3 +20,4 @@ class CameraModel(BaseModel):
                 "time_stamp": "23456789",
             }
         }
+
