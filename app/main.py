@@ -7,14 +7,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area
+from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area, Camera
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
+from models.camera_model import CameraModel,UpdateCameraModel
 
-app = FastAPI(version="0.5.8")
+app = FastAPI(version="0.5.9")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -27,6 +28,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+
+# /camera
+
+app.get("/camera", response_model=list[CameraModel], tags=['camera'])
+async def get_camera():
+    return await Camera.find().to_list(length=None)
+
+@app.post("/camera", response_model=CameraModel, status_code=HTTPStatus.CREATED, tags=['camera'])
+async def add_camera(item: CameraModel):
+    item = jsonable_encoder(item)
+    new = await Camera.insert_one(item)
+    return await Camera.find_one({"_id": new.inserted_id})
+
+@app.delete("/camera/{customer_id}", tags=['camera'])
+async def delete_camera(customer_id: str):
+    result = await Camera.delete_one({"_id": customer_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such customer")
+
 
 
 # /customers
