@@ -32,7 +32,7 @@ app.add_middleware(
 
 # /camera
 
-app.get("/camera", response_model=list[CameraModel], tags=['camera'])
+@app.get("/camera", response_model=list[CameraModel], tags=['camera'])
 async def get_camera():
     return await Camera.find().to_list(length=None)
 
