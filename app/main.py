@@ -13,9 +13,9 @@ from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_model import TipulModel, UpdateTipulModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
-from models.camera_modal import CameraModel
+from models.camera_model import CameraModel
 
-app = FastAPI(version="0.5.9")
+app = FastAPI(version="0.6.0")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
