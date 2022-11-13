@@ -46,7 +46,6 @@ class UpdateRepairModel(BaseUpdateModel):
         }
         schema_extra = {
             "example": {
-                "license_plate_number": ["12312123", "1212312"],
                 "area_id": "John Doe",
                 "tipul": "jdoe@example.com",
                 "time_stamp_start": "054-3532312",

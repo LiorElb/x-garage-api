@@ -7,11 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repair, Area
+from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
-from models.repair_model import RepairModel, UpdateRepairModel
+from models.repairss_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
 
 app = FastAPI(version="0.5.7")
@@ -395,46 +395,46 @@ async def delete_tipul(item_id: str):
 # /Repairs
 
 
-@app.get("/repair", response_model=list[RepairModel], tags=['repair'])
-async def get_repair():
-    return await Repair.find().to_list(length=None)
+@app.get("/repairs", response_model=list[RepairModel], tags=['repairs'])
+async def get_repairs():
+    return await Repairs.find().to_list(length=None)
 
 
-@app.post("/repair", response_model=RepairModel, status_code=HTTPStatus.CREATED, tags=['repair'])
-async def add_repair(item: RepairModel):
+@app.post("/repairs", response_model=RepairModel, status_code=HTTPStatus.CREATED, tags=['repairs'])
+async def add_repairs(item: RepairModel):
     item = jsonable_encoder(item)
-    new = await Repair.insert_one(item)
-    return await Repair.find_one({"_id": new.inserted_id})
+    new = await Repairs.insert_one(item)
+    return await Repairs.find_one({"_id": new.inserted_id})
 
 
-@app.get("/repair/{item_id}", response_model=RepairModel, tags=['repair'])
-async def show_repair(item_id: str):
-    item = await Repair.find_one({"_id": item_id})
+@app.get("/repairs/{item_id}", response_model=RepairModel, tags=['repairs'])
+async def show_repairs(item_id: str):
+    item = await Repairs.find_one({"_id": item_id})
 
     if item is None:
         raise HTTPException(
-            status_code=404, detail=f"repair {item_id} not found")
+            status_code=404, detail=f"repairs {item_id} not found")
 
     return item
 
 
-@app.put("/repair/{item_id}", response_model=RepairModel, tags=['repair'])
-async def update_repair(item_id: str, item: UpdateRepairModel = Body(...)):
+@app.put("/repairs/{item_id}", response_model=RepairModel, tags=['repairs'])
+async def update_repairs(item_id: str, item: UpdateRepairModel = Body(...)):
     new_item = item.dict()
 
-    existing = await Repair.find_one({"_id": item_id}, projection={"_id": 1})
+    existing = await Repairs.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=f"repair {item_id} not found")
+                            detail=f"repairs {item_id} not found")
 
-    await Repair.update_one({"_id": item_id}, {"$set": new_item})
+    await Repairs.update_one({"_id": item_id}, {"$set": new_item})
 
-    return await Repair.find_one({"_id": item_id})
+    return await Repairs.find_one({"_id": item_id})
 
 
-@app.delete("/repair/{item_id}", tags=['repair'])
-async def delete_repair(item_id: str):
-    result = await Repair.delete_one({"_id": item_id})
+@app.delete("/repairs/{item_id}", tags=['repairs'])
+async def delete_repairs(item_id: str):
+    result = await Repairs.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
