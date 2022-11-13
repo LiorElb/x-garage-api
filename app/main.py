@@ -7,15 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area, Camera
+from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
-from models.tipulim_model import TipulModel, UpdateTipulModel
+from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
-from models.camera_modal import CameraModel
 
-app = FastAPI(version="0.5.9")
+app = FastAPI(version="0.5.8")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -28,27 +27,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-
-# /camera
-
-app.get("/camera", response_model=list[CameraModel], tags=['camera'])
-async def get_camera():
-    return await Camera.find().to_list(length=None)
-
-@app.post("/camera", response_model=CameraModel, status_code=HTTPStatus.CREATED, tags=['camera'])
-async def add_camera(item: CameraModel):
-    item = jsonable_encoder(item)
-    new = await Camera.insert_one(item)
-    return await Camera.find_one({"_id": new.inserted_id})
-
-@app.delete("/camera/{customer_id}", tags=['camera'])
-async def delete_camera(customer_id: str):
-    result = await Camera.delete_one({"_id": customer_id})
-
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail="No such customer")
 
 
 # /customers
@@ -416,14 +394,6 @@ async def delete_tipul(item_id: str):
 
 # /Repairs
 
-@app.get("/repairs/area/{area_id}", response_model=list[RepairModel], tags=['repairs'])
-async def get_repairs_in_area(area_id: str):
-    items = await Repairs.find("area_id": area_id).to_list(length=None)
-    if items is None:
-        raise HTTPException(
-            status_code=404, detail=f"repairs in {area_id} not found")
-    return items
-
 
 @app.get("/repairs", response_model=list[RepairModel], tags=['repairs'])
 async def get_repairs():
@@ -472,6 +442,7 @@ async def delete_repairs(item_id: str):
 
 
 # /area
+
 
 @app.get("/area", response_model=list[AreaModel], tags=['area'])
 async def get_area():
