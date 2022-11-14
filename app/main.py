@@ -7,13 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area, Camera
+from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area, Camera,Category
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel,UpdateCameraModel
+from models.storagecategory_model import StorageCategoryModel,UpdateStorageCategoryModel
 
 app = FastAPI(version="0.5.9")
 
@@ -458,6 +459,55 @@ async def update_repairs(item_id: str, item: UpdateRepairModel = Body(...)):
 @app.delete("/repairs/{item_id}", tags=['repairs'])
 async def delete_repairs(item_id: str):
     result = await Repairs.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
+
+# /category
+
+
+@app.get("/category", response_model=list[StorageCategoryModel], tags=['category'])
+async def get_category():
+    return await Category.find().to_list(length=None)
+
+
+@app.post("/category", response_model=StorageCategoryModel, status_code=HTTPStatus.CREATED, tags=['category'])
+async def add_category(item: StorageCategoryModel):
+    item = jsonable_encoder(item)
+    new = await Category.insert_one(item)
+    return await Category.find_one({"_id": new.inserted_id})
+
+
+@app.get("/category/{item_id}", response_model=StorageCategoryModel, tags=['category'])
+async def show_category(item_id: str):
+    item = await Category.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"category {item_id} not found")
+
+    return item
+
+
+@app.put("/category/{item_id}", response_model=StorageCategoryModel, tags=['area'])
+async def update_category(item_id: str, item: UpdateStorageCategoryModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await Category.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"area {item_id} not found")
+
+    await Category.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await Category.find_one({"_id": item_id})
+
+
+@app.delete("/category/{item_id}", tags=['area'])
+async def delete_category(item_id: str):
+    result = await Category.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
