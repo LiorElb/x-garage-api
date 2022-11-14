@@ -9,7 +9,7 @@ if not MONGO_CONNECTION_STR:
 client = motor.AsyncIOMotorClient(MONGO_CONNECTION_STR)
 CUSTOMERS = client['main']['customers']
 CARS = client['main']['cars']
-ITEMS = client['main']['items']
+Storage = client['main']['storage']
 Used = client['main']['used']
 Tipul = client['main']['tipul']
 Repairs = client['main']['repairs']

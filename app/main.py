@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, ITEMS, Used, Tipul, Repairs, Area, Camera,Category
+from app.mongo_client import CUSTOMERS, CARS, Storage, Used, Tipul, Repairs, Area, Camera,Category
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
@@ -273,23 +273,23 @@ async def delete_car(license_plate_number: str):
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Deleted more than one car!")
 
 
-# /items
+# /storage
 
-@app.get("/items", response_model=list[ItemModel], tags=['items'])
+@app.get("/storage", response_model=list[ItemModel], tags=['storage'])
 async def get_items():
-    return await ITEMS.find().to_list(length=None)
+    return await Storage.find().to_list(length=None)
 
 
-@app.post("/items", response_model=ItemModel, status_code=HTTPStatus.CREATED, tags=['items'])
+@app.post("/storage", response_model=ItemModel, status_code=HTTPStatus.CREATED, tags=['storage'])
 async def add_item(item: ItemModel):
     item = jsonable_encoder(item)
-    new = await ITEMS.insert_one(item)
-    return await ITEMS.find_one({"_id": new.inserted_id})
+    new = await Storage.insert_one(item)
+    return await Storage.find_one({"_id": new.inserted_id})
 
 
-@app.get("/items/{item_id}", response_model=ItemModel, tags=['items'])
+@app.get("/storage/{item_id}", response_model=ItemModel, tags=['storage'])
 async def show_item(item_id: str):
-    item = await ITEMS.find_one({"_id": item_id})
+    item = await Storage.find_one({"_id": item_id})
 
     if item is None:
         raise HTTPException(
@@ -298,23 +298,23 @@ async def show_item(item_id: str):
     return item
 
 
-@app.put("/items/{item_id}", response_model=ItemModel, tags=['items'])
+@app.put("/storage/{item_id}", response_model=ItemModel, tags=['storage'])
 async def update_item(item_id: str, item: UpdateItemModel = Body(...)):
     new_item = item.dict()
 
-    existing = await ITEMS.find_one({"_id": item_id}, projection={"_id": 1})
+    existing = await Storage.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=f"Item {item_id} not found")
 
-    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+    await Storage.update_one({"_id": item_id}, {"$set": new_item})
 
-    return await ITEMS.find_one({"_id": item_id})
+    return await Storage.find_one({"_id": item_id})
 
 
-@app.delete("/items/{item_id}", tags=['items'])
+@app.delete("/storage/{item_id}", tags=['storage'])
 async def delete_item(item_id: str):
-    result = await ITEMS.delete_one({"_id": item_id})
+    result = await Storage.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
@@ -355,9 +355,9 @@ async def update_used(item_id: str, item: UpdateUsedModel = Body(...)):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=f"Used {item_id} not found")
 
-    await ITEMS.update_one({"_id": item_id}, {"$set": new_item})
+    await Storage.update_one({"_id": item_id}, {"$set": new_item})
 
-    return await ITEMS.find_one({"_id": item_id})
+    return await Storage.find_one({"_id": item_id})
 
 
 @app.delete("/used/{item_id}", tags=['used'])
