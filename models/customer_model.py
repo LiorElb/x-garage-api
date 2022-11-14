@@ -1,5 +1,5 @@
 from bson import ObjectId
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field
 
 from models.base_update_model import BaseUpdateModel, MISSING
 from models.pyobjectid import PyObjectId
