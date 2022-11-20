@@ -355,9 +355,9 @@ async def update_used(item_id: str, item: UpdateUsedModel = Body(...)):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=f"Used {item_id} not found")
 
-    await Storage.update_one({"_id": item_id}, {"$set": new_item})
+    await Used.update_one({"_id": item_id}, {"$set": new_item})
 
-    return await Storage.find_one({"_id": item_id})
+    return await Used.find_one({"_id": item_id})
 
 
 @app.delete("/used/{item_id}", tags=['used'])
