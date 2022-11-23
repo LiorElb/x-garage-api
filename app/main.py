@@ -7,14 +7,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
-from app.mongo_client import CUSTOMERS, CARS, Storage, Used, Tipul, Repairs, Area, Camera,Category
+from models.supplier_model import SupplierModel, UpdateSupplierModel
+from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, Repairs, Area, Camera, Category
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
-from models.camera_model import CameraModel,UpdateCameraModel
-from models.storagecategory_model import StorageCategoryModel,UpdateStorageCategoryModel
+from models.camera_model import CameraModel, UpdateCameraModel
+from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
 
 app = FastAPI(version="0.5.9")
 
@@ -37,11 +38,13 @@ app.add_middleware(
 async def get_camera():
     return await Camera.find().to_list(length=None)
 
+
 @app.post("/camera", response_model=CameraModel, status_code=HTTPStatus.CREATED, tags=['camera'])
 async def add_camera(item: CameraModel):
     item = jsonable_encoder(item)
     new = await Camera.insert_one(item)
     return await Camera.find_one({"_id": new.inserted_id})
+
 
 @app.delete("/camera/{customer_id}", tags=['camera'])
 async def delete_camera(customer_id: str):
@@ -50,7 +53,6 @@ async def delete_camera(customer_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail="No such customer")
-
 
 
 # /customers
@@ -491,21 +493,21 @@ async def show_category(item_id: str):
     return item
 
 
-@app.put("/category/{item_id}", response_model=StorageCategoryModel, tags=['area'])
+@app.put("/category/{item_id}", response_model=StorageCategoryModel, tags=['category'])
 async def update_category(item_id: str, item: UpdateStorageCategoryModel = Body(...)):
     new_item = item.dict()
 
     existing = await Category.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=f"area {item_id} not found")
+                            detail=f"category {item_id} not found")
 
     await Category.update_one({"_id": item_id}, {"$set": new_item})
 
     return await Category.find_one({"_id": item_id})
 
 
-@app.delete("/category/{item_id}", tags=['area'])
+@app.delete("/category/{item_id}", tags=['category'])
 async def delete_category(item_id: str):
     result = await Category.delete_one({"_id": item_id})
 
@@ -557,6 +559,56 @@ async def update_area(item_id: str, item: UpdateAreaModel = Body(...)):
 @app.delete("/area/{item_id}", tags=['area'])
 async def delete_area(item_id: str):
     result = await Area.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
+
+
+# /Supplier
+
+
+@app.get("/supplier", response_model=list[SupplierModel], tags=['supplier'])
+async def get_supplier():
+    return await SUPPLIER.find().to_list(length=None)
+
+
+@app.post("/supplier", response_model=SupplierModel, status_code=HTTPStatus.CREATED, tags=['supplier'])
+async def add_supplier(item: SupplierModel):
+    item = jsonable_encoder(item)
+    new = await SUPPLIER.insert_one(item)
+    return await SUPPLIER.find_one({"_id": new.inserted_id})
+
+
+@app.get("/supplier/{item_id}", response_model=SupplierModel, tags=['supplier'])
+async def show_supplier(item_id: str):
+    item = await SUPPLIER.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"supplier {item_id} not found")
+
+    return item
+
+
+@app.put("/supplier/{item_id}", response_model=SupplierModel, tags=['supplier'])
+async def update_supplier(item_id: str, item: UpdateSupplierModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await SUPPLIER.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"supplier {item_id} not found")
+
+    await SUPPLIER.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await SUPPLIER.find_one({"_id": item_id})
+
+
+@app.delete("/supplier/{item_id}", tags=['supplier'])
+async def delete_supplier(item_id: str):
+    result = await SUPPLIER.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
