@@ -493,7 +493,7 @@ async def show_category(item_id: str):
     return item
 
 
-@app.put("/category/{item_id}", response_model=StorageCategoryModel, tags=['area'])
+@app.put("/category/{item_id}", response_model=StorageCategoryModel, tags=['category'])
 async def update_category(item_id: str, item: UpdateStorageCategoryModel = Body(...)):
     new_item = item.dict()
 
@@ -507,7 +507,7 @@ async def update_category(item_id: str, item: UpdateStorageCategoryModel = Body(
     return await Category.find_one({"_id": item_id})
 
 
-@app.delete("/category/{item_id}", tags=['area'])
+@app.delete("/category/{item_id}", tags=['category'])
 async def delete_category(item_id: str):
     result = await Category.delete_one({"_id": item_id})
 
