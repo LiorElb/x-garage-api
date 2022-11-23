@@ -30,7 +30,7 @@ class SupplierModel(BaseModel):
         }
 
 
-class UpdateStorageCategoryModel(BaseUpdateModel):
+class UpdateSupplierModel(BaseUpdateModel):
     name: str | None = Field(default=MISSING)
     phone_number: str | None = Field(default=MISSING)
     email: str | None = Field(default=MISSING)
