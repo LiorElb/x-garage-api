@@ -17,7 +17,7 @@ from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel, UpdateCameraModel
 from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
 
-app = FastAPI(version="0.5.9")
+app = FastAPI(version="0.6.9")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -493,7 +493,7 @@ async def show_category(item_id: str):
     return item
 
 
-@app.put("/category/{item_id}", response_model=StorageCategoryModel, tags=['category'])
+@app.put("/category/{item_id}", response_model=StorageCategoryModel, tags=['area'])
 async def update_category(item_id: str, item: UpdateStorageCategoryModel = Body(...)):
     new_item = item.dict()
 
@@ -507,7 +507,7 @@ async def update_category(item_id: str, item: UpdateStorageCategoryModel = Body(
     return await Category.find_one({"_id": item_id})
 
 
-@app.delete("/category/{item_id}", tags=['category'])
+@app.delete("/category/{item_id}", tags=['area'])
 async def delete_category(item_id: str):
     result = await Category.delete_one({"_id": item_id})
 
@@ -563,7 +563,6 @@ async def delete_area(item_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail="No such item")
-
 
 
 # /Supplier
