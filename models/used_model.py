@@ -9,6 +9,7 @@ class UsedModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str = Field(...)
     category: str = Field(...)
+    sub: str | None = Field(default=None)
     notes: str | None = Field(default=None)
     amount_in_stock: int = Field(default=0, gt=0)
     car_types: list[str] | None = Field(default=None)
@@ -24,6 +25,7 @@ class UsedModel(BaseModel):
             "example": {
                 "name": "hammer",
                 "category": "mechanic",
+                "sub": "right",
                 "notes": "very heavy",
                 "amount_in_stock": 1,
                 "car_types": ["honda", "toyota"],
@@ -35,6 +37,7 @@ class UsedModel(BaseModel):
 class UpdateUsedModel(BaseUpdateModel):
     name: str = Field(default=MISSING)
     category: str = Field(default=MISSING)
+    sub: str = Field(default=MISSING)
     notes: str | None = Field(default=MISSING)
     description: str | None = Field(default=MISSING)
     amount_in_stock: int = Field(default=MISSING)
@@ -50,6 +53,7 @@ class UpdateUsedModel(BaseUpdateModel):
             "example": {
                 "name": "hammer",
                 "category": "mechanic",
+                "sub": "right",
                 "notes": "very heavy",
                 "amount_in_stock": 1,
                 "car_types": ["honda", "toyota"],
