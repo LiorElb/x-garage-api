@@ -9,7 +9,7 @@ class UsedModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str = Field(...)
     category: str = Field(...)
-    sub: list[str] | None = Field(default=None)
+    sub: list[str] | str | None = Field(default=None)
     notes: str | None = Field(default=None)
     amount_in_stock: int = Field(default=0, gt=0)
     car_types: list[str] | None = Field(default=None)
@@ -37,7 +37,7 @@ class UsedModel(BaseModel):
 class UpdateUsedModel(BaseUpdateModel):
     name: str = Field(default=MISSING)
     category: str = Field(default=MISSING)
-    sub: list[str] | None = Field(default=MISSING)
+    sub: list[str] | str | None = Field(default=MISSING)
     notes: str | None = Field(default=MISSING)
     description: str | None = Field(default=MISSING)
     amount_in_stock: int = Field(default=MISSING)
