@@ -168,9 +168,9 @@ async def get_cars():
     return await CARS.find().to_list(length=None)
 
 
-@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
+@app.get("/cars/types", response_model=list[list[str] | None], tags=['cars'])
 async def get_car_types(extended: bool = False):
-    return await CARS.distinct(f'government_data.{"tozar","shnat_yitzur" if extended else "tozar"}')
+    return await CARS.distinct(f'government_data.{("tozar","shnat_yitzur") if extended else "tozar"}')
    
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
