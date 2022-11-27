@@ -10,7 +10,7 @@ class ItemModel(BaseModel):
     barcode: str | None = Field(default=None)
     name: str = Field(...)
     category: str = Field(...)
-    sub: str | None = Field(default=None)
+    sub: list[str] | str | None = Field(default=None)
     supplier: str | None = Field(default=None)
     notes: str | None = Field(default=None)
     amount_in_stock: int = Field(default=0, gt=0)
@@ -31,7 +31,7 @@ class ItemModel(BaseModel):
                 "barcode": "1111111",
                 "name": "hammer",
                 "category": "mechanic",
-                "sub": "mechanic",
+                "sub": ["honda", "toyota"],
                 "supplier": "mechanic",
                 "notes": "very heavy",
                 "amount_in_stock": 1,
@@ -48,7 +48,7 @@ class UpdateItemModel(BaseUpdateModel):
     barcode: str | None = Field(default=MISSING)
     name: str = Field(default=MISSING)
     category: str = Field(default=MISSING)
-    sub: str = Field(default=MISSING)
+    sub: list[str] | str | None = Field(default=MISSING)
     supplier: str = Field(default=MISSING)
     notes: str | None = Field(default=MISSING)
     amount_in_stock: int = Field(default=MISSING)
@@ -68,7 +68,7 @@ class UpdateItemModel(BaseUpdateModel):
                 "barcode": "1111111",
                 "name": "hammer",
                 "category": "mechanic",
-                "sub": "hammer",
+                "sub": ["honda", "toyota"],
                 "supplier": "mechanic",
                 "notes": "very heavy",
                 "amount_in_stock": 1,
