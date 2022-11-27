@@ -170,8 +170,7 @@ async def get_cars():
 
 @app.get("/cars/types", response_model=list[str | None], tags=['cars'])
 async def get_car_types(extended: bool = False):
-    return await CARS.distinct(f'government_data.{"tozeret","shnat_yitzur","kinuy_mishari" if extended else "tozeret","shnat_yitzur","kinuy_mishari"}')
-   
+    return await CARS.distinct(f'government_data.{"tozeret_nm" if extended else "tozar"}')
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
