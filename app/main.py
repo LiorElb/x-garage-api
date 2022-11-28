@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
+from models.forCarKind import CarKindModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
 from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, Repairs, Area, Camera, Category
@@ -168,7 +169,7 @@ async def get_cars():
     return await CARS.find().to_list(length=None)
 
 
-@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
+@app.get("/cars/types", response_model=list[CarKindModel], tags=['cars'])
 async def get_car_types(extended: bool = False):
     return await CARS.distinct(f'government_data.{"tozeret_nm" if extended else "tozar"}')
 
