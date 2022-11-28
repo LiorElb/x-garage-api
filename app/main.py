@@ -177,7 +177,7 @@ async def get_car_type(car_num: str):
     if car is None:
         raise HTTPException(
             status_code=404, detail=f"Customer {car_num} not found")
-    return (car["government_data"]["kinuy_mishari"] , car["government_data"]["shnat_yizur"])
+    return (car["government_data"]["tozar"], car["government_data"]["kinuy_mishari"], car["government_data"]["shnat_yizur"])
 
     # if car_num is CARS.license_plate_number:
     #     return {"model_name": car_num, "message": CARS.government_data.tozar}
@@ -189,10 +189,13 @@ async def get_car_types():
 
 
 @app.get("/cars/types1", tags=['cars'])
-async def get_car_types1(q: Union[str, None] = None):
-    results = CARS["license_plate_number"]
-    if q:
-        results.update({"q": q})
+async def get_car_types1():
+    results = await CARS.distinct("government_data.kinuy_mishari")
+    return results
+
+@app.get("/cars/types2", tags=['cars'])
+async def get_car_types2():
+    results = await CARS.distinct("government_data.shnat_yizur")
     return results
 
 # @app.get("/cars/typesnew1", tags=['cars'])
