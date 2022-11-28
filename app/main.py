@@ -240,7 +240,8 @@ async def get_car_types5():
         k = res["kinuy_mishari"]
         s = res["shnat_yitzur"]
         var = [t, k, s]
-        return var
+        x.extend(var)
+    return x
 
 # @app.get("/cars/typesnew1", tags=['cars'])
 # async def get_car_types_new1():
