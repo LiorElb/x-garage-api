@@ -169,8 +169,12 @@ async def get_cars():
     return await CARS.find().to_list(length=None)
 
 
-@app.get("/cars/types", response_model=list[list[str | None] | None], tags=['cars'])
+@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
 async def get_car_types():
+    return await CARS.distinct('government_data.tozar')
+
+@app.get("/cars/typesnew", response_model=list[list[str | None] | None], tags=['cars'])
+async def get_car_types_new():
     return await CARS.distinct('government_data.tozar','government_data.shnat_yitzur')
 
 
