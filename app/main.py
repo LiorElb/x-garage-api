@@ -172,7 +172,7 @@ async def get_cars():
 
 
 @app.get("/cars/types/{car_num}")
-async def get_car_type(car_num: CARS):
+async def get_car_type(car_num: str):
     if car_num is CARS.license_plate_number:
         return {"model_name": car_num, "message": CARS.government_data.tozar}
 
@@ -182,32 +182,32 @@ async def get_car_types():
     return await CARS.distinct('government_data.tozar')
 
 
-@app.get("/cars/typesnew1", tags=['cars'])
-async def get_car_types_new1():
-    car = await CARS.get('government_data.tozar'+'government_data.kinuy_mishari'+'government_data.shnat_yitzur')
-    return (car)
+# @app.get("/cars/typesnew1", tags=['cars'])
+# async def get_car_types_new1():
+#     car = await CARS.get('government_data.tozar'+'government_data.kinuy_mishari'+'government_data.shnat_yitzur')
+#     return (car)
 
 
-@app.get("/cars/typesnewx", tags=['cars'])
-async def get_car_types_newx():
-    car = await CARS.get('government_data.tozar', 'government_data.kinuy_mishari', 'government_data.shnat_yitzur')
-    return (car)
+# @app.get("/cars/typesnewx", tags=['cars'])
+# async def get_car_types_newx():
+#     car = await CARS.get('government_data.tozar', 'government_data.kinuy_mishari', 'government_data.shnat_yitzur')
+#     return (car)
 
 
-@app.get("/cars/typesnew2", tags=['cars'])
-async def get_car_types_new2():
-    car = await CARS.distinct('government_data.tozar', 'government_data.kinuy_mishari')
-    degem = await CARS.distinct('government_data.kinuy_mishari')
-    year = await CARS.distinct('government_data.shnat_yitzur')
-    return (car)
+# @app.get("/cars/typesnew2", tags=['cars'])
+# async def get_car_types_new2():
+#     car = await CARS.distinct('government_data.tozar', 'government_data.kinuy_mishari')
+#     degem = await CARS.distinct('government_data.kinuy_mishari')
+#     year = await CARS.distinct('government_data.shnat_yitzur')
+#     return (car)
 
 
-@app.get("/cars/typesnew3", tags=['cars'])
-async def get_car_types_new3():
-    car = await CARS.find('government_data.tozar').to_list(length=None)
-    degem = await CARS.find('government_data.kinuy_mishari').to_list(length=None)
-    year = await CARS.find('government_data.shnat_yitzur').to_list(length=None)
-    return (car, degem, year)
+# @app.get("/cars/typesnew3", tags=['cars'])
+# async def get_car_types_new3():
+#     car = await CARS.find('government_data.tozar').to_list(length=None)
+#     degem = await CARS.find('government_data.kinuy_mishari').to_list(length=None)
+#     year = await CARS.find('government_data.shnat_yitzur').to_list(length=None)
+#     return (car, degem, year)
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
