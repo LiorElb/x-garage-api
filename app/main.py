@@ -173,8 +173,14 @@ async def get_cars():
 
 @app.get("/cars/types/{car_num}")
 async def get_car_type(car_num: str):
-    if car_num is CARS.license_plate_number:
-        return {"model_name": car_num, "message": CARS.government_data.tozar}
+    car = await CARS.find_one({"license_plate_number": car_num})
+    if car is None:
+        raise HTTPException(
+            status_code=404, detail=f"Customer {car_num} not found")
+    return (car.government_data.tozar)
+
+    # if car_num is CARS.license_plate_number:
+    #     return {"model_name": car_num, "message": CARS.government_data.tozar}
 
 
 @app.get("/cars/types", response_model=list[str | None], tags=['cars'])
