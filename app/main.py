@@ -178,7 +178,7 @@ async def get_car_types():
 async def get_car_types_new():
     return await CARS.distinct('government_data')
 
-@app.get("/cars/typesnew1", response_model=list[dict | None], tags=['cars'])
+@app.get("/cars/typesnew1", tags=['cars'])
 async def get_car_types_new1():
     car= await CARS.distinct('government_data.tozar')
     degem= await CARS.distinct('government_data.kinuy_mishari')
