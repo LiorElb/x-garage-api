@@ -6,9 +6,7 @@ from models.pyobjectid import PyObjectId
 
 
 class CarKindModel(BaseModel):
-    name: str = Field(...)
-    degem: str = Field(...)
-    shana: str = Field(...)
+    tozar: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
