@@ -198,7 +198,7 @@ async def get_car_types1():
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types2():
-    results = await CARS.distinct[("government_data.shnat_yitzur"),("government_data.kinuy_mishari"),("government_data.tozar")]
+    results = await CARS.distinct(["government_data.shnat_yitzur","government_data.kinuy_mishari","government_data.tozar"])
     return results
 
 # @app.get("/cars/typesnew1", tags=['cars'])
