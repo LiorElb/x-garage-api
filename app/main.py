@@ -184,6 +184,11 @@ async def get_car_types_new1():
     car = await CARS.get('government_data.tozar'+'government_data.kinuy_mishari'+'government_data.shnat_yitzur')
     return (car)
 
+@app.get("/cars/typesnewx", tags=['cars'])
+async def get_car_types_newx():
+    car = await CARS.get('government_data.tozar','government_data.kinuy_mishari','government_data.shnat_yitzur')
+    return (car)
+
 
 @app.get("/cars/typesnew2", tags=['cars'])
 async def get_car_types_new2():
