@@ -220,7 +220,7 @@ async def get_car_types5():
     results = await CARS.distinct('government_data')
     x = []
     for i in range(results.length):
-        t = results[i].tozar
+        t = results[i]["tozar"]
         x.extend(t)
          
     # for res in results:
