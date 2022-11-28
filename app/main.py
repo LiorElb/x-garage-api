@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
 from models.car_model import CarModel, UpdateCarModel
-# from models.forCarKind import CarKindModel
+from models.forCarKind import CarKindModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
 from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, Repairs, Area, Camera, Category
@@ -169,9 +169,9 @@ async def get_cars():
     return await CARS.find().to_list(length=None)
 
 
-@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
+@app.get("/cars/types", response_model=list[CarKindModel], tags=['cars'])
 async def get_car_types():
-    return await CARS.distinct(f'government_data.{"tozar"}')
+    return await CARS.distinct(f'government_data.{"tozar"}',f'government_data.{"kinuy_mishari"}',f'government_data.{"shnat_yitzur"}')
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
