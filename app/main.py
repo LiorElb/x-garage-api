@@ -177,7 +177,7 @@ async def get_car_type(car_num: str):
     if car is None:
         raise HTTPException(
             status_code=404, detail=f"Customer {car_num} not found")
-    return (car.government_data.tozar)
+    return (car["government_data"])
 
     # if car_num is CARS.license_plate_number:
     #     return {"model_name": car_num, "message": CARS.government_data.tozar}
