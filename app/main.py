@@ -178,12 +178,29 @@ async def get_car_types():
 async def get_car_types_new():
     return await CARS.distinct('government_data')
 
+
 @app.get("/cars/typesnew1", tags=['cars'])
 async def get_car_types_new1():
-    car= await CARS.distinct('government_data.tozar')
-    degem= await CARS.distinct('government_data.kinuy_mishari')
-    year= await CARS.distinct('government_data.shnat_yitzur')
-    return({car,degem,year})
+    car = await CARS.distinct('government_data.tozar')
+    degem = await CARS.distinct('government_data.kinuy_mishari')
+    year = await CARS.distinct('government_data.shnat_yitzur')
+    return ({car, degem, year})
+
+
+@app.get("/cars/typesnew2", tags=['cars'])
+async def get_car_types_new2():
+    car = await CARS.distinct('government_data.tozar')
+    degem = await CARS.distinct('government_data.kinuy_mishari')
+    year = await CARS.distinct('government_data.shnat_yitzur')
+    return (car)
+
+@app.get("/cars/typesnew3", tags=['cars'])
+async def get_car_types_new3():
+    car = await CARS.distinct('government_data.tozar')
+    degem = await CARS.distinct('government_data.kinuy_mishari')
+    year = await CARS.distinct('government_data.shnat_yitzur')
+    return (car,degem,year)
+
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
 async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
