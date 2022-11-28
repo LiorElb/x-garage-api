@@ -1,11 +1,12 @@
 from http import HTTPStatus
 
 import aiohttp
-from typing import Union
 from fastapi import FastAPI, HTTPException, Body, BackgroundTasks, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
+
+from typing import Union
 from models.car_model import CarModel, UpdateCarModel
 from models.forCarKind import CarKindModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
