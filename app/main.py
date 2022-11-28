@@ -178,6 +178,11 @@ async def get_car_types():
 async def get_car_types_new():
     return await CARS.distinct('government_data')
 
+@app.get("/cars/typesnew1", response_model=list[dict | None], tags=['cars'])
+async def get_car_types_new1():
+    return await CARS.distinct('government_data.tozar', 'government_data.shnat_yitzur')
+
+
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
 async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
