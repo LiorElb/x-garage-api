@@ -199,48 +199,36 @@ async def get_car_types1():
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types2():
-    results = await CARS.distinct('government_data')
-    x = []
-    for res in results:
-        x.insert(res.index,res["tozar"])
-    return x
+    results = await CARS.distinct("government_data.tozar")
+    return results
 
 
 @app.get("/cars/types3", tags=['cars'])
 async def get_car_types3():
-    results = await CARS.distinct('government_data')
-    x = []
-    for res in results:
-        t = res["tozar"]
-        k = res["kinuy_mishari"]
-        s = res["shnat_yitzur"]
-        var = [t, k, s]
-        x.__add__(var)
-    return x
+    results = await CARS.distinct("government_data.kinuy_mishari")
+    return results
 
 
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
-    results = await CARS.distinct('government_data')
-    x = []
-    for res in results:
-        t = res["tozar"]
-        k = res["kinuy_mishari"]
-        s = res["shnat_yitzur"]
-        var = [t, k, s]
-        return res
+    results = await CARS.distinct("government_data.shnat_yitzur")
+    return results
 
 
 @app.get("/cars/types5", tags=['cars'])
 async def get_car_types5():
     results = await CARS.distinct('government_data')
     x = []
-    for res in results:
-        t = res["tozar"]
-        k = res["kinuy_mishari"]
-        s = res["shnat_yitzur"]
-        var = [t, k, s]
-        x.extend(var)
+    for i in range(results.length):
+        t = results[i].tozar
+        x.extend(t)
+         
+    # for res in results:
+    #     t = res["tozar"]
+    #     k = res["kinuy_mishari"]
+    #     s = res["shnat_yitzur"]
+    #     var = [t, k, s]
+    #     x.extend(var)
     return x
 
 # @app.get("/cars/typesnew1", tags=['cars'])
