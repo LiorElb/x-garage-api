@@ -171,7 +171,7 @@ async def get_cars():
     return await CARS.find().to_list(length=None)
 
 
-@app.get("/cars/types/{car_num}")
+@app.get("/cars/types/{car_num}", tags=['cars'])
 async def get_car_type(car_num: str):
     car = await CARS.find_one({"license_plate_number": car_num})
     if car is None:
@@ -187,6 +187,13 @@ async def get_car_type(car_num: str):
 async def get_car_types():
     return await CARS.distinct('government_data.tozar')
 
+
+@app.get("/cars/types1", tags=['cars'])
+async def get_car_types1(q: Union[str, None] = None):
+    results = {"Cars": [{"license_plate_number": "Foo"}, {"_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
 
 # @app.get("/cars/typesnew1", tags=['cars'])
 # async def get_car_types_new1():
