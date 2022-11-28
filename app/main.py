@@ -193,7 +193,7 @@ async def get_car_types():
 
 @app.get("/cars/types1", tags=['cars'])
 async def get_car_types1():
-    results = await CARS.distinct["government_data.kinuy_mishari"]
+    results = await CARS.distinct(["government_data.kinuy_mishari"])
     return results
 
 @app.get("/cars/types2", tags=['cars'])
