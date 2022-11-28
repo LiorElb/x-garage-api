@@ -211,19 +211,38 @@ async def get_car_types3():
     results = await CARS.distinct('government_data')
     x = []
     for res in results:
-        t=res["tozar"]
-        k=res["kinuy_mishari"]
-        s=res["shnat_yitzur"]
-        var=[t,k,s]
+        t = res["tozar"]
+        k = res["kinuy_mishari"]
+        s = res["shnat_yitzur"]
+        var = [t, k, s]
         x.__add__(var)
     return x
 
 
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
-    results = await CARS.find().to_list(length=None)
-    results1 = results.government_data
-    return results1
+    results = await CARS.distinct('government_data')
+    x = []
+    for res in results:
+        t = res["tozar"]
+        k = res["kinuy_mishari"]
+        s = res["shnat_yitzur"]
+        var = [t, k, s]
+        x.__add__(var)
+        return res
+
+
+@app.get("/cars/types5", tags=['cars'])
+async def get_car_types5():
+    results = await CARS.distinct('government_data')
+    x = []
+    for res in results:
+        t = res["tozar"]
+        k = res["kinuy_mishari"]
+        s = res["shnat_yitzur"]
+        var = [t, k, s]
+        x.__add__(var)
+        return var
 
 # @app.get("/cars/typesnew1", tags=['cars'])
 # async def get_car_types_new1():
