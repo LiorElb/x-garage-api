@@ -169,7 +169,7 @@ async def get_cars():
     return await CARS.find().to_list(length=None)
 
 
-@app.get("/cars/types", response_model=list[CarKindModel], tags=['cars'])
+@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
 async def get_car_types():
     return await CARS.distinct(f'government_data.{"tozar"}')
 
