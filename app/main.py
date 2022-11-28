@@ -180,7 +180,11 @@ async def get_car_types_new():
 
 @app.get("/cars/typesnew1", response_model=list[dict | None], tags=['cars'])
 async def get_car_types_new1():
-    return await CARS.distinct('government_data.tozar', 'government_data.shnat_yitzur')
+    car= await CARS.distinct('government_data.tozar')
+    degem= await CARS.distinct('government_data.kinuy_mishari')
+    year= await CARS.distinct('government_data.shnat_yitzur')
+
+    return({car,degem,year})
 
 
 
