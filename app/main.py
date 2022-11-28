@@ -190,7 +190,7 @@ async def get_car_types():
 
 @app.get("/cars/types1", tags=['cars'])
 async def get_car_types1(q: Union[str, None] = None):
-    results = {"Cars": [{"license_plate_number": "Foo"}, {"_id": "Bar"}]}
+    results = CARS["license_plate_number"]
     if q:
         results.update({"q": q})
     return results
