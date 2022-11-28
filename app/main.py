@@ -177,7 +177,10 @@ async def get_car_type(car_num: str):
     if car is None:
         raise HTTPException(
             status_code=404, detail=f"Customer {car_num} not found")
-    return ({car["government_data"]["tozar"], car["government_data"]["kinuy_mishari"], car["government_data"]["shnat_yitzur"]})
+    x=car["government_data"]["tozar"]
+    y=car["government_data"]["kinuy_mishari"]
+    z=car["government_data"]["shnat_yitzur"]
+    return (x,y,z)
 
     # if car_num is CARS.license_plate_number:
     #     return {"model_name": car_num, "message": CARS.government_data.tozar}
