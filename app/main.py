@@ -187,75 +187,7 @@ async def get_car_type(car_num: str):
 
 @app.get("/cars/types", response_model=list[str | None], tags=['cars'])
 async def get_car_types():
-    return await CARS.distinct('government_data.tozar')
-
-
-@app.get("/cars/types1", tags=['cars'])
-async def get_car_types1():
-    results = await CARS.distinct("government_data")
-    return results
-
-
-@app.get("/cars/types2", tags=['cars'])
-async def get_car_types2():
-    results = await CARS.distinct("government_data.tozar")
-    return results
-
-
-@app.get("/cars/types3", tags=['cars'])
-async def get_car_types3():
-    results = await CARS.distinct("government_data.kinuy_mishari")
-    return results
-
-
-@app.get("/cars/types4", tags=['cars'])
-async def get_car_types4():
-    results = await CARS.distinct("government_data.shnat_yitzur")
-    return results
-
-
-@app.get("/cars/types5", tags=['cars'])
-async def get_car_types5():
-    results = await CARS.distinct('government_data')
-    x = []
-    for i in range(results.length):
-        t = results[i]["tozar"]
-        x.extend(t)
-
-    # for res in results:
-    #     t = res["tozar"]
-    #     k = res["kinuy_mishari"]
-    #     s = res["shnat_yitzur"]
-    #     var = [t, k, s]
-    #     x.extend(var)
-    return x
-
-# @app.get("/cars/typesnew1", tags=['cars'])
-# async def get_car_types_new1():
-#     car = await CARS.get('government_data.tozar'+'government_data.kinuy_mishari'+'government_data.shnat_yitzur')
-#     return (car)
-
-
-# @app.get("/cars/typesnewx", tags=['cars'])
-# async def get_car_types_newx():
-#     car = await CARS.get('government_data.tozar', 'government_data.kinuy_mishari', 'government_data.shnat_yitzur')
-#     return (car)
-
-
-# @app.get("/cars/typesnew2", tags=['cars'])
-# async def get_car_types_new2():
-#     car = await CARS.distinct('government_data.tozar', 'government_data.kinuy_mishari')
-#     degem = await CARS.distinct('government_data.kinuy_mishari')
-#     year = await CARS.distinct('government_data.shnat_yitzur')
-#     return (car)
-
-
-# @app.get("/cars/typesnew3", tags=['cars'])
-# async def get_car_types_new3():
-#     car = await CARS.find('government_data.tozar').to_list(length=None)
-#     degem = await CARS.find('government_data.kinuy_mishari').to_list(length=None)
-#     year = await CARS.find('government_data.shnat_yitzur').to_list(length=None)
-#     return (car, degem, year)
+    return await CARS.distinct(f'government_data.{"tozar"}')
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
