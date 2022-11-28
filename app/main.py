@@ -202,7 +202,7 @@ async def get_car_types2():
     results = await CARS.distinct('government_data')
     x = []
     for res in results:
-        x.append(res["tozar"])
+        x.insert(res.index,res["tozar"])
     return x
 
 
@@ -228,7 +228,6 @@ async def get_car_types4():
         k = res["kinuy_mishari"]
         s = res["shnat_yitzur"]
         var = [t, k, s]
-        x.__add__(var)
         return res
 
 
@@ -241,7 +240,6 @@ async def get_car_types5():
         k = res["kinuy_mishari"]
         s = res["shnat_yitzur"]
         var = [t, k, s]
-        x.__add__(var)
         return var
 
 # @app.get("/cars/typesnew1", tags=['cars'])
