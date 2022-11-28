@@ -173,9 +173,10 @@ async def get_cars():
 async def get_car_types():
     return await CARS.distinct('government_data.tozar')
 
-@app.get("/cars/typesnew", response_model=list[list[str | None] | None], tags=['cars'])
+
+@app.get("/cars/typesnew", response_model=list[dict | None], tags=['cars'])
 async def get_car_types_new():
-    return await CARS.distinct('government_data.tozar','government_data.shnat_yitzur')
+    return await CARS.distinct('government_data.tozar', 'government_data.shnat_yitzur')
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
