@@ -240,7 +240,7 @@ async def get_car_types4():
 
 
 @app.get("/cars/types5", tags=['cars'])
-async def get_car_types():
+async def get_car_types5():
     results = await CARS.aggregate(pipeline)
     return results
 
