@@ -10,9 +10,10 @@ from typing import Union
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
-from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, Repairs, Area, Camera, Category
+from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, Repairs, Area, Camera, Category,Type
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
+from models.type_model import TypeModel, UpdateTypeModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
@@ -358,6 +359,58 @@ async def delete_car(license_plate_number: str):
     if result.deleted_count != 1:
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Deleted more than one car!")
+
+
+
+
+# /type
+
+
+@app.get("/type", response_model=list[TypeModel], tags=['type'])
+async def get_type():
+    return await Type.find().to_list(length=None)
+
+
+@app.post("/type", response_model=TypeModel, status_code=HTTPStatus.CREATED, tags=['type'])
+async def add_type(item: TypeModel):
+    item = jsonable_encoder(item)
+    new = await Type.insert_one(item)
+    return await Type.find_one({"_id": new.inserted_id})
+
+
+@app.get("/type/{item_id}", response_model=TypeModel, tags=['type'])
+async def show_type(item_id: str):
+    item = await Type.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"type {item_id} not found")
+
+    return item
+
+
+@app.put("/type/{item_id}", response_model=AreaModel, tags=['type'])
+async def update_type(item_id: str, item: UpdateTypeModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await Type.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"type {item_id} not found")
+
+    await Type.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await Type.find_one({"_id": item_id})
+
+
+@app.delete("/type/{item_id}", tags=['type'])
+async def delete_type(item_id: str):
+    result = await Type.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
 
 
 # /storage
