@@ -198,14 +198,7 @@ async def get_car_types1():
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types2():
-    results = await CARS.aggregate([
-        ...    {
-            ...      "$group":
-            ...       {
-                ...          "_id": 0,
-                ...          "plate_number": {"$addToSet": '$StudentFirstName'},
-                ...}}
-        ...])
+    results = await CARS.aggregate([ { "$group ": { "_id" : "$item" } } ])
     return results
 
 
