@@ -198,7 +198,21 @@ async def get_car_types1():
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types2():
-    results = await CARS.aggregate([{"$group ": {"government_data": "$item"}}])
+    results = await CARS.aggregate(
+        [
+  {
+    "$group": {
+      "_id": "$property_type",
+      "properties": {
+        "$push": {
+          "note": "$note",
+          "code": "$code",
+        },
+      },
+    },
+  },
+  { "$out": "properties_by_type" },
+])
     return results
 
 
