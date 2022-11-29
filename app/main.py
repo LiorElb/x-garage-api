@@ -192,7 +192,9 @@ async def get_car_types():
 
 @app.get("/cars/types1", tags=['cars'])
 async def get_car_types1():
-    results = await CARS.find()
+    results = await CARS.find().to_list(length=None)
+    for x in results:
+        return x
     return results
 
 
@@ -210,21 +212,20 @@ async def get_car_types2():
     ])
     return results
 
-
-@app.get("/cars/types3", tags=['cars'])
-async def get_car_types3():
-    results = await CARS.aggregate(pipeline)
-    return results
-
 stage_group_year = {
     "$group": {
-        "_id": "$year",
+        "code": "$year",
     }
 }
 
 pipeline = [
     stage_group_year,
 ]
+
+@app.get("/cars/types3", tags=['cars'])
+async def get_car_types3():
+    results = await CARS.aggregate(pipeline)
+    return results
 
 pipeline1 = [
     {'$group': {'_id': {'code': '$city', 'note': '$state'},
