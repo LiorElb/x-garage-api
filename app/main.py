@@ -361,8 +361,6 @@ async def delete_car(license_plate_number: str):
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail="Deleted more than one car!")
 
 
-
-
 # /type
 
 
@@ -389,7 +387,7 @@ async def show_type(item_id: str):
     return item
 
 
-@app.put("/type/{item_id}", response_model=AreaModel, tags=['type'])
+@app.put("/type/{item_id}", response_model=TypeModel, tags=['type'])
 async def update_type(item_id: str, item: UpdateTypeModel = Body(...)):
     new_item = item.dict()
 
@@ -410,8 +408,6 @@ async def delete_type(item_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail="No such item")
-
-
 
 # /storage
 
