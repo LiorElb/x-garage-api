@@ -40,10 +40,10 @@ class TypeModel(BaseModel):
 
 
 class UpdateTypeModel(BaseUpdateModel):
-    number1: int | None = Field(default=MISSING)
-    number2: int | None = Field(default=MISSING)
-    number3: int | None = Field(default=MISSING)
-    number4: int | None = Field(default=MISSING)
+    number1: int = Field(default=MISSING)
+    number2: int = Field(default=MISSING)
+    number3: int = Field(default=MISSING)
+    number4: int = Field(default=MISSING)
     note1: str | None = Field(default=MISSING)
     note2: str | None = Field(default=MISSING)
     note3: str | None = Field(default=MISSING)
