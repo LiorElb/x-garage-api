@@ -204,7 +204,10 @@ async def get_car_types2():
 
 @app.get("/cars/types3", tags=['cars'])
 async def get_car_types3():
-    results = await CARS.distinct("government_data.kinuy_mishari")
+    results = await CARS.aggregate([
+    {"$group" : {"_id" : {"key":"$key", "score":"$score"}}}, 
+    {"$project" : {"_id":0, "key":"$_id.key", "score":"$_id.score"}}
+])
     return results
 
 pipeline = [
@@ -234,7 +237,7 @@ pipeline2 = [
 
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
-    results = await CARS.aggregate([pipeline2])
+    results = await CARS.aggregate([ {"$group": { "_id": { "government_data.tozar": "$post_id", "government_data.kinuy_mishari": "$post_message" } } } ])
     return results
 
 
