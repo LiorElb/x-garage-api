@@ -198,7 +198,7 @@ async def get_car_types1():
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types2():
-    results = await CARS.aggregate([ { "$group ": { "government_data" : "$item" } } ])
+    results = await CARS.aggregate([{"$group ": {"government_data": "$item"}}])
     return results
 
 
@@ -211,9 +211,9 @@ async def get_car_types3():
     return results
 
 pipeline = [
-    {"$group": {"government_data.tozar": "$tozar",
-                "government_data.kinuy_mishari": "$kinuy_mishari", "government_data.shnat_yitzur": "$shnat_yitzur"}}
-]
+    {'$group': {'_id': {'code': '$city', 'note': '$state'},
+                'city_pop': {'$sum': '$license_plate_number'}}},
+    {'$sort': {'city_pop': 1}}]
 pipeline2 = [
     {"$group": {
         "_id": {
@@ -235,7 +235,13 @@ pipeline2 = [
 
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
-    results = await CARS.aggregate([{"$group": {"_id": {"government_data.tozar": "$post_id", "government_data.kinuy_mishari": "$post_message"}}}])
+    results = await CARS.aggregate(pipeline2)
+    return results
+
+
+@app.get("/cars/types5", tags=['cars'])
+async def get_car_types():
+    results = await CARS.aggregate(pipeline)
     return results
 
 
