@@ -16,7 +16,7 @@ class TypeModel(BaseModel):
     note1: str | None = Field(default=None)
     note2: str | None = Field(default=None)
     note3: str | None = Field(default=None)
-    note4: str | None = Field(default=None)|
+    note4: str | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
