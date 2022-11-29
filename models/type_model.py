@@ -7,7 +7,8 @@ from models.pyobjectid import PyObjectId
 
 class TypeModel(BaseModel):
 
-    id: list[str] | None = Field(..., alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    list: list[str] | None = Field(default=None)
     number1: int = Field(default=None)
     number2: int = Field(default=None)
     number3: int = Field(default=None)
