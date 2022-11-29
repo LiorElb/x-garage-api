@@ -210,25 +210,13 @@ async def get_car_types3():
 
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
-    results = await CARS.distinct("government_data.shnat_yitzur")
+    results = await CARS.aggregate( [
+                {"$group": { "_id": { "government_data.tozar": "$tozar", "government_data.kinuy_mishari": "$kinuy_mishari" , "government_data.shnat_yitzur": "$shnat_yitzur" } } }
+            ])
     return results
 
 
-@app.get("/cars/types5", tags=['cars'])
-async def get_car_types5():
-    results = await CARS.distinct('government_data')
-    x = []
-    for i in range(results.length):
-        t = results[i]["tozar"]
-        x.extend(t)
 
-    # for res in results:
-    #     t = res["tozar"]
-    #     k = res["kinuy_mishari"]
-    #     s = res["shnat_yitzur"]
-    #     var = [t, k, s]
-    #     x.extend(var)
-    return x
 
 # @app.get("/cars/typesnew1", tags=['cars'])
 # async def get_car_types_new1():
