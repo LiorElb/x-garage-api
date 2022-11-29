@@ -4,6 +4,7 @@ import aiohttp
 from fastapi import FastAPI, HTTPException, Body, BackgroundTasks, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
+from mongo_aggregation import MongoAggregation
 
 
 from typing import Union
@@ -198,33 +199,35 @@ async def get_car_types1():
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types2():
-    results = await CARS.aggregate(
-        [
-  {
-    "$group": {
-      "_id": "$property_type",
-      "properties": {
-        "$push": {
-          "note": "$note",
-          "code": "$code",
-        },
-      },
-    },
-  },
-  { "$out": "properties_by_type" },
-])
+    results = await CARS.aggregate([
+        {
+            "$lookup": {
+                "from": "comments",
+                "localField": "_id",
+                "foreignField": "movie_id",
+                "as": "related_comments",
+            }
+        }
+    ])
     return results
 
 
 @app.get("/cars/types3", tags=['cars'])
 async def get_car_types3():
-    results = await CARS.aggregate([
-        {"$group": {"_id": {"code": "$code", "note": "$note"}}},
-        {"$project": {"_id": 0, "code": "$_id.code", "note": "$_id.note"}}
-    ])
+    results = await CARS.aggregate(pipeline)
     return results
 
+stage_group_year = {
+   "$group": {
+         "_id": "$year",
+   }
+}
+
 pipeline = [
+   stage_group_year,
+]
+
+pipeline1 = [
     {'$group': {'_id': {'code': '$city', 'note': '$state'},
                 'city_pop': {'$sum': '$license_plate_number'}}},
     {'$sort': {'city_pop': 1}}]
