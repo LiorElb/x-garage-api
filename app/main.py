@@ -192,21 +192,21 @@ async def get_car_types():
 
 @app.get("/cars/types1", tags=['cars'])
 async def get_car_types1():
-    results = await CARS.find().pretty()
+    results = await CARS.find()
     return results
 
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types2():
-    results = await CARS.aggregate([ { "$group ": { "_id" : "$item" } } ])
+    results = await CARS.aggregate([ { "$group ": { "government_data" : "$item" } } ])
     return results
 
 
 @app.get("/cars/types3", tags=['cars'])
 async def get_car_types3():
     results = await CARS.aggregate([
-        {"$group": {"_id": {"key": "$key", "score": "$score"}}},
-        {"$project": {"_id": 0, "key": "$_id.key", "score": "$_id.score"}}
+        {"$group": {"_id": {"code": "$code", "note": "$note"}}},
+        {"$project": {"_id": 0, "code": "$_id.code", "note": "$_id.note"}}
     ])
     return results
 
@@ -217,9 +217,8 @@ pipeline = [
 pipeline2 = [
     {"$group": {
         "_id": {
-            "government_data.tozar": "$tozar",
-            "government_data.kinuy_mishari": "$kinuy_mishari",
-            "government_data.shnat_yitzur": "$shnat_yitzur"
+            "code": "$code",
+            "note": "$note"
         }
     }
     },
@@ -227,9 +226,8 @@ pipeline2 = [
     {
         "$project": {
             "_id": 0,
-            "government_data.tozar": "$_id.government_data.tozar",
-            "government_data.kinuy_mishari": "$_id.government_data.kinuy_mishari",
-            "government_data.shnat_yitzur": "$_id.government_data.shnat_yitzur"
+            "code": "$_id.code",
+            "note": "$_id.note"
         }
     }
 ]
