@@ -211,8 +211,8 @@ async def get_car_types3():
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
     results = await CARS.aggregate([
-        {"$types":  {"government_data.tozar": "$tozar",
-                     "government_data.kinuy_mishari": "$kinuy_mishari", "government_data.shnat_yitzur": "$shnat_yitzur"}}
+        {"government_data.tozar": "$tozar", "government_data.kinuy_mishari": "$kinuy_mishari",
+            "government_data.shnat_yitzur": "$shnat_yitzur"}
     ])
     return results
 
