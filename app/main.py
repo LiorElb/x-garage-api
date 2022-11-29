@@ -211,11 +211,29 @@ pipeline = [
     {"$group": {"government_data.tozar": "$tozar",
                 "government_data.kinuy_mishari": "$kinuy_mishari", "government_data.shnat_yitzur": "$shnat_yitzur"}}
 ]
+pipeline2 = [
+    {"$group": {
+        "_id": {
+            "government_data.tozar": "$tozar",
+            "government_data.kinuy_mishari": "$kinuy_mishari",
+            "government_data.shnat_yitzur": "$shnat_yitzur"
+        }
+    }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "tozar": "$_id.tozar",
+            "kinuy_mishari": "$_id.kinuy_mishari",
+            "shnat_yitzur": "$_id.shnat_yitzur"
+        }
+    }
+]
 
 
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
-    results = await CARS.aggregate([pipeline])
+    results = await CARS.aggregate([pipeline2])
     return results
 
 
