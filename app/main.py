@@ -207,13 +207,15 @@ async def get_car_types3():
     results = await CARS.distinct("government_data.kinuy_mishari")
     return results
 
+pipeline = [
+    {"$group": {"government_data.tozar": "$tozar",
+                "government_data.kinuy_mishari": "$kinuy_mishari", "government_data.shnat_yitzur": "$shnat_yitzur"}}
+]
+
 
 @app.get("/cars/types4", tags=['cars'])
 async def get_car_types4():
-    results = await CARS.aggregate([
-        {"$group": {"_id": {"government_data.tozar": "$tozar",
-                            "government_data.kinuy_mishari": "$kinuy_mishari", "government_data.shnat_yitzur": "$shnat_yitzur"}}}
-    ])
+    results = await CARS.aggregate([pipeline])
     return results
 
 
