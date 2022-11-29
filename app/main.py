@@ -224,9 +224,9 @@ pipeline2 = [
     {
         "$project": {
             "_id": 0,
-            "tozar": "$_id.tozar",
-            "kinuy_mishari": "$_id.kinuy_mishari",
-            "shnat_yitzur": "$_id.shnat_yitzur"
+            "government_data.tozar": "$_id.government_data.tozar",
+            "government_data.kinuy_mishari": "$_id.government_data.kinuy_mishari",
+            "government_data.shnat_yitzur": "$_id.government_data.shnat_yitzur"
         }
     }
 ]
