@@ -221,7 +221,7 @@ async def get_car_types5():
     for i in range(results.length):
         t = results[i]["tozar"]
         x.extend(t)
-         
+
     # for res in results:
     #     t = res["tozar"]
     #     k = res["kinuy_mishari"]
@@ -614,18 +614,6 @@ async def add_area(item: AreaModel):
     item = jsonable_encoder(item)
     new = await Area.insert_one(item)
     return await Area.find_one({"_id": new.inserted_id})
-
-@app.get("/lift/{lift_id}", response_model=RepairModel, tags=['repairs'])
-async def show_repairs(lift_id: str):
-    item = await Repairs.find({"area_id": lift_id})
-
-    if item is None:
-        raise HTTPException(
-            status_code=404, detail=f"repairs {lift_id} not found")
-
-    return item
-
-
 
 
 @app.get("/area/{item_id}", response_model=AreaModel, tags=['area'])
