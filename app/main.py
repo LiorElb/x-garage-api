@@ -4,7 +4,6 @@ import aiohttp
 from fastapi import FastAPI, HTTPException, Body, BackgroundTasks, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-from mongo_aggregation import MongoAggregation
 
 
 from typing import Union
@@ -218,13 +217,13 @@ async def get_car_types3():
     return results
 
 stage_group_year = {
-   "$group": {
-         "_id": "$year",
-   }
+    "$group": {
+        "_id": "$year",
+    }
 }
 
 pipeline = [
-   stage_group_year,
+    stage_group_year,
 ]
 
 pipeline1 = [
