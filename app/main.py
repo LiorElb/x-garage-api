@@ -197,8 +197,9 @@ async def get_car_types1():
     for car in results:
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
-        z = car["government_data"]["shnat_yitzur"]
+        z = car["government_data"]["shnat_yitzur"]    
         var.append({x,y,z})
+        return x
     
     return var
 
