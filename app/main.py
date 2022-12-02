@@ -193,24 +193,24 @@ async def get_car_types():
 @app.get("/cars/types1", tags=['cars'])
 async def get_car_types1():
     results = await CARS.find().to_list(length=None)
-    var=[]
+    var = []
     for car in results:
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
-        z = car["government_data"]["shnat_yitzur"]    
-        var.append({"tozar":x,"kinuy_mishari":y,"shnat_yitzur":z})
+        z = car["government_data"]["shnat_yitzur"]
+        var.append({"tozar": x, "kinuy_mishari": y, "shnat_yitzur": z})
     return var
 
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_car_types0():
     results = await CARS.find().to_list(length=None)
-    var=[]
-    for car,i in results:
+    var = []
+    for car, i in results:
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
-        z = car["government_data"]["shnat_yitzur"]    
-        var.insert(i,{"tozar":x,"kinuy_mishari":y,"shnat_yitzur":z})
+        z = car["government_data"]["shnat_yitzur"]
+        var.insert(i, {"tozar": x, "kinuy_mishari": y, "shnat_yitzur": z})
     return var
 
 stage_group_year = {
