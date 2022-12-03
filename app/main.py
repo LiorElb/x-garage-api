@@ -193,14 +193,9 @@ async def get_car_types():
 @app.get("/cars/types1", tags=['cars'])
 async def get_car_types1():
     results = await CARS.find().to_list(length=None)
-    var=[]
-    for car in results:
-        x = car["government_data"]["tozar"]
-        y = car["government_data"]["kinuy_mishari"]
-        z = car["government_data"]["shnat_yitzur"]
-        var.append({x,y,z})
-    
-    return var
+    for x in results:
+        return x
+    return results
 
 
 @app.get("/cars/types2", tags=['cars'])
@@ -226,7 +221,6 @@ stage_group_year = {
 pipeline = [
     stage_group_year,
 ]
-
 
 @app.get("/cars/types3", tags=['cars'])
 async def get_car_types3():
