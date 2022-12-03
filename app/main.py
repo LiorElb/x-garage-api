@@ -198,20 +198,25 @@ async def get_car_types1():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]    
-        var.append({"tozar":x,"kinuy_mishari":y,"shnat_yitzur":z})
+        var.append({x,y,z})
+        return x
+    
     return var
 
 
 @app.get("/cars/types2", tags=['cars'])
-async def get_car_types1():
-    results = await CARS.find().to_list(length=None)
-    var=[]
-    for car in results:
-        x = car["government_data"]["tozar"]
-        y = car["government_data"]["kinuy_mishari"]
-        z = car["government_data"]["shnat_yitzur"]    
-        var.insert(car.index,{"tozar":x,"kinuy_mishari":y,"shnat_yitzur":z})
-    return var
+async def get_car_types2():
+    results = await CARS.aggregate([
+        {
+            "$lookup": {
+                "from": "comments",
+                "localField": "_id",
+                "foreignField": "movie_id",
+                "as": "related_comments",
+            }
+        }
+    ])
+    return results
 
 stage_group_year = {
     "$group": {
