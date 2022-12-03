@@ -1,11 +1,12 @@
 from http import HTTPStatus
 
 import aiohttp
-from fastapi import FastAPI, HTTPException, Body, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Body, BackgroundTasks, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
 
+from typing import Union
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
@@ -174,16 +175,111 @@ async def get_car_type(car_num: str):
     car = await CARS.find_one({"license_plate_number": car_num})
     if car is None:
         raise HTTPException(
-            status_code=404, detail=f"license_plate_number {car_num} not found")
+            status_code=404, detail=f"Customer {car_num} not found")
     x = car["government_data"]["tozar"]
     y = car["government_data"]["kinuy_mishari"]
     z = car["government_data"]["shnat_yitzur"]
     return (x, y, z)
 
+    # if car_num is CARS.license_plate_number:
+    #     return {"model_name": car_num, "message": CARS.government_data.tozar}
+
 
 @app.get("/cars/types", response_model=list[str | None], tags=['cars'])
 async def get_car_types():
     return await CARS.distinct('government_data.tozar')
+
+
+# @app.get("/cars/types1", tags=['cars'])
+# async def get_car_types1():
+#     results = await CARS.find().to_list(length=None)
+#     var = []
+#     for car in results:
+#         x = car["government_data"]["tozar"]
+#         y = car["government_data"]["kinuy_mishari"]
+#         z = car["government_data"]["shnat_yitzur"]
+#         var.append({"tozar": x, "kinuy_mishari": y, "shnat_yitzur": z})
+#     return var
+
+
+# @app.get("/cars/types2", tags=['cars'])
+# async def get_car_types0():
+#     results = await CARS.find().to_list(length=None)
+#     var = []
+#     for car, i in results:
+#         x = car["government_data"]["tozar"]
+#         y = car["government_data"]["kinuy_mishari"]
+#         z = car["government_data"]["shnat_yitzur"]
+#         var.insert(i, {"tozar": x, "kinuy_mishari": y, "shnat_yitzur": z})
+#     return var
+
+
+# @app.get("/cars/types3", tags=['cars'])
+# async def get_car_types3():
+#     results = await CARS.aggregate(pipeline)
+#     return results
+
+# pipeline1 = [
+#     {'$group': {'_id': {'code': '$city', 'note': '$state'},
+#                 'city_pop': {'$sum': '$license_plate_number'}}},
+#     {'$sort': {'city_pop': 1}}]
+# pipeline2 = [
+#     {"$group": {
+#         "_id": {
+#             "code": "$code",
+#             "note": "$note"
+#         }
+#     }
+#     },
+
+#     {
+#         "$project": {
+#             "_id": 0,
+#             "code": "$_id.code",
+#             "note": "$_id.note"
+#         }
+#     }
+# ]
+
+
+# @app.get("/cars/types4", tags=['cars'])
+# async def get_car_types4():
+#     results = await CARS.aggregate(pipeline2)
+#     return results
+
+
+# @app.get("/cars/types5", tags=['cars'])
+# async def get_car_types5():
+#     results = await CARS.aggregate(pipeline)
+#     return results
+
+
+# @app.get("/cars/typesnew1", tags=['cars'])
+# async def get_car_types_new1():
+#     car = await CARS.get('government_data.tozar'+'government_data.kinuy_mishari'+'government_data.shnat_yitzur')
+#     return (car)
+
+
+# @app.get("/cars/typesnewx", tags=['cars'])
+# async def get_car_types_newx():
+#     car = await CARS.get('government_data.tozar', 'government_data.kinuy_mishari', 'government_data.shnat_yitzur')
+#     return (car)
+
+
+# @app.get("/cars/typesnew2", tags=['cars'])
+# async def get_car_types_new2():
+#     car = await CARS.distinct('government_data.tozar', 'government_data.kinuy_mishari')
+#     degem = await CARS.distinct('government_data.kinuy_mishari')
+#     year = await CARS.distinct('government_data.shnat_yitzur')
+#     return (car)
+
+
+# @app.get("/cars/typesnew3", tags=['cars'])
+# async def get_car_types_new3():
+#     car = await CARS.find('government_data.tozar').to_list(length=None)
+#     degem = await CARS.find('government_data.kinuy_mishari').to_list(length=None)
+#     year = await CARS.find('government_data.shnat_yitzur').to_list(length=None)
+#     return (car, degem, year)
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
