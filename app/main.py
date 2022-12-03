@@ -190,16 +190,16 @@ async def get_car_types():
     return await CARS.distinct('government_data.tozar')
 
 
-@app.get("/cars/types1", tags=['cars'])
-async def get_car_types1():
-    results = await CARS.find().to_list(length=None)
-    var = []
-    for car in results:
-        x = car["government_data"]["tozar"]
-        y = car["government_data"]["kinuy_mishari"]
-        z = car["government_data"]["shnat_yitzur"]
-        var.append({"tozar": x, "kinuy_mishari": y, "shnat_yitzur": z})
-    return var
+# @app.get("/cars/types1", tags=['cars'])
+# async def get_car_types1():
+#     results = await CARS.find().to_list(length=None)
+#     var = []
+#     for car in results:
+#         x = car["government_data"]["tozar"]
+#         y = car["government_data"]["kinuy_mishari"]
+#         z = car["government_data"]["shnat_yitzur"]
+#         var.append({"tozar": x, "kinuy_mishari": y, "shnat_yitzur": z})
+#     return var
 
 
 # @app.get("/cars/types2", tags=['cars'])
@@ -213,55 +213,45 @@ async def get_car_types1():
 #         var.insert(i, {"tozar": x, "kinuy_mishari": y, "shnat_yitzur": z})
 #     return var
 
-stage_group_year = {
-    "$group": {
-        "code": "$year",
-    }
-}
 
-pipeline = [
-    stage_group_year,
-]
+# @app.get("/cars/types3", tags=['cars'])
+# async def get_car_types3():
+#     results = await CARS.aggregate(pipeline)
+#     return results
 
+# pipeline1 = [
+#     {'$group': {'_id': {'code': '$city', 'note': '$state'},
+#                 'city_pop': {'$sum': '$license_plate_number'}}},
+#     {'$sort': {'city_pop': 1}}]
+# pipeline2 = [
+#     {"$group": {
+#         "_id": {
+#             "code": "$code",
+#             "note": "$note"
+#         }
+#     }
+#     },
 
-@app.get("/cars/types3", tags=['cars'])
-async def get_car_types3():
-    results = await CARS.aggregate(pipeline)
-    return results
-
-pipeline1 = [
-    {'$group': {'_id': {'code': '$city', 'note': '$state'},
-                'city_pop': {'$sum': '$license_plate_number'}}},
-    {'$sort': {'city_pop': 1}}]
-pipeline2 = [
-    {"$group": {
-        "_id": {
-            "code": "$code",
-            "note": "$note"
-        }
-    }
-    },
-
-    {
-        "$project": {
-            "_id": 0,
-            "code": "$_id.code",
-            "note": "$_id.note"
-        }
-    }
-]
+#     {
+#         "$project": {
+#             "_id": 0,
+#             "code": "$_id.code",
+#             "note": "$_id.note"
+#         }
+#     }
+# ]
 
 
-@app.get("/cars/types4", tags=['cars'])
-async def get_car_types4():
-    results = await CARS.aggregate(pipeline2)
-    return results
+# @app.get("/cars/types4", tags=['cars'])
+# async def get_car_types4():
+#     results = await CARS.aggregate(pipeline2)
+#     return results
 
 
-@app.get("/cars/types5", tags=['cars'])
-async def get_car_types5():
-    results = await CARS.aggregate(pipeline)
-    return results
+# @app.get("/cars/types5", tags=['cars'])
+# async def get_car_types5():
+#     results = await CARS.aggregate(pipeline)
+#     return results
 
 
 # @app.get("/cars/typesnew1", tags=['cars'])
