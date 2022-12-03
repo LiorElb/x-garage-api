@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-import uvicorn
 import aiohttp
 from fastapi import FastAPI, HTTPException, Body, BackgroundTasks, Query
 from fastapi.encoders import jsonable_encoder
