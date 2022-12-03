@@ -44,7 +44,7 @@ class UpdateItemModel(BaseUpdateModel):
     barcode: str | None = Field(default=MISSING)
     name: str = Field(default=MISSING)
     category: str = Field(default=MISSING)
-    sub: str = Field(default=MISSING)
+    sub: list[str] | str = Field(default=MISSING)
     supplier: str = Field(default=MISSING)
     notes: str | None = Field(default=MISSING)
     amount_in_stock: int = Field(default=MISSING)
