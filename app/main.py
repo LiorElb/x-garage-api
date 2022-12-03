@@ -17,7 +17,7 @@ from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel, UpdateCameraModel
 from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
 
-app = FastAPI(version="0.6.9")
+app = FastAPI(version="0.7.9")
 
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
