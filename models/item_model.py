@@ -10,7 +10,7 @@ class ItemModel(BaseModel):
     barcode: str | None = Field(default=None)
     name: str = Field(...)
     category: str = Field(...)
-    sub: str | None = Field(default=None)
+    sub: str | list[str] | None = Field(default=None)
     supplier: str | None = Field(default=None)
     notes: str | None = Field(default=None)
     amount_in_stock: int = Field(default=0, gt=0)
