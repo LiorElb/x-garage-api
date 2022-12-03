@@ -181,7 +181,10 @@ async def get_car_type(car_num: str):
     z = car["government_data"]["shnat_yitzur"]
     return (x, y, z)
 
-#   return (car, degem, year)
+
+@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
+async def get_car_types():
+    return await CARS.distinct('government_data.tozar')
 
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
