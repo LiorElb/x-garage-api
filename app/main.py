@@ -363,36 +363,36 @@ async def delete_car(license_plate_number: str):
 # /storage
 
 @app.get("/storage", response_model=list[ItemModel], tags=['storage'])
-async def get_items():
+async def get_storage():
     return await Storage.find().to_list(length=None)
 
 
 @app.post("/storage", response_model=ItemModel, status_code=HTTPStatus.CREATED, tags=['storage'])
-async def add_item(item: ItemModel):
+async def add_storage(item: ItemModel):
     item = jsonable_encoder(item)
     new = await Storage.insert_one(item)
     return await Storage.find_one({"_id": new.inserted_id})
 
 
 @app.get("/storage/{item_id}", response_model=ItemModel, tags=['storage'])
-async def show_item(item_id: str):
+async def show_storage(item_id: str):
     item = await Storage.find_one({"_id": item_id})
 
     if item is None:
         raise HTTPException(
-            status_code=404, detail=f"Item {item_id} not found")
+            status_code=404, detail=f"storage {item_id} not found")
 
     return item
 
 
 @app.put("/storage/{item_id}", response_model=ItemModel, tags=['storage'])
-async def update_item(item_id: str, item: UpdateItemModel = Body(...)):
+async def update_storage(item_id: str, item: UpdateItemModel = Body(...)):
     new_item = item.dict()
 
     existing = await Storage.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=f"Item {item_id} not found")
+                            detail=f"storage {item_id} not found")
 
     await Storage.update_one({"_id": item_id}, {"$set": new_item})
 
@@ -400,7 +400,7 @@ async def update_item(item_id: str, item: UpdateItemModel = Body(...)):
 
 
 @app.delete("/storage/{item_id}", tags=['storage'])
-async def delete_item(item_id: str):
+async def delete_storage(item_id: str):
     result = await Storage.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
@@ -428,7 +428,7 @@ async def show_used(item_id: str):
 
     if item is None:
         raise HTTPException(
-            status_code=404, detail=f"Used {item_id} not found")
+            status_code=404, detail=f"used {item_id} not found")
 
     return item
 
@@ -440,7 +440,7 @@ async def update_used(item_id: str, item: UpdateUsedModel = Body(...)):
     existing = await Used.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=f"Used {item_id} not found")
+                            detail=f"used {item_id} not found")
 
     await Used.update_one({"_id": item_id}, {"$set": new_item})
 
@@ -476,7 +476,7 @@ async def show_tipul(item_id: str):
 
     if item is None:
         raise HTTPException(
-            status_code=404, detail=f"Tipul {item_id} not found")
+            status_code=404, detail=f"tipul {item_id} not found")
 
     return item
 
@@ -488,7 +488,7 @@ async def update_tipul(item_id: str, item: UpdateTipulModel = Body(...)):
     existing = await Tipul.find_one({"_id": item_id}, projection={"_id": 1})
     if existing is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=f"Tipul {item_id} not found")
+                            detail=f"tipul {item_id} not found")
 
     await Tipul.update_one({"_id": item_id}, {"$set": new_item})
 
@@ -503,7 +503,7 @@ async def delete_tipul(item_id: str):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail="No such item")
 
-# /Repairs
+# /repairs
 
 
 @app.get("/repairs", response_model=list[RepairModel], tags=['repairs'])
@@ -650,7 +650,7 @@ async def delete_area(item_id: str):
                             detail="No such item")
 
 
-# /Supplier
+# /supplier
 
 
 @app.get("/supplier", response_model=list[SupplierModel], tags=['supplier'])
