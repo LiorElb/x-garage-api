@@ -206,11 +206,11 @@ async def get_car_types1():
 async def get_car_types0():
     results = await CARS.find().to_list(length=None)
     var=[]
-    for car,i in results:
+    for car in results:
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]    
-        var.insert(i,{"tozar":x,"kinuy_mishari":y,"shnat_yitzur":z})
+        var.insert(car.index,{"tozar":x,"kinuy_mishari":y,"shnat_yitzur":z})
     return var
 
 stage_group_year = {
