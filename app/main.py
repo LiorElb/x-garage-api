@@ -31,7 +31,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
 # /camera
 
 @app.get("/camera", response_model=list[CameraModel], tags=['camera'])
