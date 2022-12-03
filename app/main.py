@@ -203,7 +203,7 @@ async def get_car_types1():
 
 
 @app.get("/cars/types2", tags=['cars'])
-async def get_car_types0():
+async def get_car_types1():
     results = await CARS.find().to_list(length=None)
     var=[]
     for car in results:
