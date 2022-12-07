@@ -192,18 +192,20 @@ async def get_car_types(extended: bool = False):
 async def get_cars0():
     cars = await CARS.find().to_list(length=None)
     for car in cars:
-        return car
+        return car["government_data"]["tozar"]
 
 
 @app.get("/cars/types1", tags=['cars'])
 async def get_cars1():
     cars = await CARS.find().to_list(length=None)
+    list = []
     for car in cars:
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        return x+", " + y+", "+z
-
+        dic={'tozar':x,'kinuy_mishari':y,'shnat_yitzur':z}
+        list.append(dic)
+    return list
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_cars2():
@@ -213,7 +215,8 @@ async def get_cars2():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        list.append(x)
+        dic={'tozar':x,'kinuy_mishari':y,'shnat_yitzur':z}
+        list.insert(dic)
     return list
     # new_list = []
     # for one_student_choice in list:
@@ -230,8 +233,8 @@ async def get_cars3():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        list.append(x+ y)
-    return list
+        dic={'tozar':x,'kinuy_mishari':y,'shnat_yitzur':z}
+    return dic
 
 
 # async def get_car_types():
