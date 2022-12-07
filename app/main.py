@@ -205,7 +205,12 @@ async def get_cars1():
         z = car["government_data"]["shnat_yitzur"]
         dic={'tozar':x,'kinuy':y,'shana':z}
         list.append(dic)
-    return list
+    # return list
+    new_list = []
+    for one_student_choice in list:
+        if one_student_choice not in new_list:
+            new_list.append(one_student_choice)
+    return new_list
 
 @app.get("/cars/types2", tags=['cars'])
 async def get_cars2():
