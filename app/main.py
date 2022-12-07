@@ -211,7 +211,18 @@ async def get_cars2():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        list.append({x, y, z})
+        list.append(x, y, z)
+    return list
+
+@app.get("/cars/types3", tags=['cars'])
+async def get_cars3():
+    cars = await CARS.find().to_list(length=None)
+    list = []
+    for car in cars:
+        x = car["government_data"]["tozar"]
+        y = car["government_data"]["kinuy_mishari"]
+        z = car["government_data"]["shnat_yitzur"]
+        list.append([x, y, z])
     return list
 
 
