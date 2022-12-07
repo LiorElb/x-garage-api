@@ -203,7 +203,7 @@ async def get_cars1():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        dic={'tozar':x,'kinuy_mishari':y,'shnat_yitzur':z}
+        dic={'tozar':x,'kinuy':y,'shana':z}
         list.append(dic)
     return list
 
