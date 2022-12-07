@@ -202,7 +202,7 @@ async def get_cars1():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        return {x, y, z}
+        return {x+", " + y+", "+z}
 
 
 @app.get("/cars/types2", tags=['cars'])
@@ -213,15 +213,12 @@ async def get_cars2():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        list.append((x, y, z))
+        list.append({x+", " + y+", "+z})
     return list
-    
-    
-    
     # new_list = []
     # for one_student_choice in list:
     #     if one_student_choice not in new_list:
-    #         new_list.append(one_student_choice) 
+    #         new_list.append(one_student_choice)
     # return new_list
 
 
@@ -233,7 +230,7 @@ async def get_cars3():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        list.append([x, y, z])
+        list.append(x+", " + y+", "+z)
     return list
 
 
