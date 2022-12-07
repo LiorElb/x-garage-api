@@ -187,11 +187,11 @@ async def get_car_type(car_num: str):
 async def get_car_types(extended: bool = False):
     return await CARS.distinct(f'government_data.{"tozeret_nm" if extended else "tozar"}')
 
-@app.get("/cars/types0", response_model=list[CarModel], tags=['cars'])
-async def get_cars0():
-    cars = await CARS.find().to_list(length=None)
-    for car in cars:
-        return car
+# @app.get("/cars/types0", response_model=list[CarModel], tags=['cars'])
+# async def get_cars0():
+#     cars = await CARS.find().to_list(length=None)
+#     for car in cars:
+#         return car
 
 # @app.get("/cars/types1", response_model=list[CarModel], tags=['cars'])
 # async def get_cars1():
