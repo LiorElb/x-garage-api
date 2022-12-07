@@ -177,15 +177,16 @@ async def get_car_type(car_num: str):
     x = car["government_data"]["tozar"]
     y = car["government_data"]["kinuy_mishari"]
     z = car["government_data"]["shnat_yitzur"]
-    return (x, y, z)
+    dic={'tozar':x,'kinuy_mishari':y,'shnat_yitzur':z}
+    return (dic)
 
     # if car_num is CARS.license_plate_number:
     #     return {"model_name": car_num, "message": CARS.government_data.tozar}
 
 
-@app.get("/cars/types", response_model=list[str | None], tags=['cars'])
-async def get_car_types(extended: bool = False):
-    return await CARS.distinct(f'government_data.{"tozeret_nm" if extended else "tozar"}')
+# @app.get("/cars/types", response_model=list[str | None], tags=['cars'])
+# async def get_car_types(extended: bool = False):
+    # return await CARS.distinct(f'government_data.{"tozeret_nm" if extended else "tozar"}')
 
 
 @app.get("/cars/types0", tags=['cars'])
@@ -195,7 +196,7 @@ async def get_cars0():
         return car["government_data"]["tozar"]
 
 
-@app.get("/cars/types1", tags=['cars'])
+@app.get("/cars/types", tags=['cars'])
 async def get_cars1():
     cars = await CARS.find().to_list(length=None)
     list = []
@@ -203,7 +204,7 @@ async def get_cars1():
         x = car["government_data"]["tozar"]
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
-        dic={'tozar':x,'kinuy':y,'shana':z}
+        dic={'tozar':x,'kinuy_mishari':y,'shnat_yitzur':z}
         list.append(dic)
     # return list
     new_list = []
