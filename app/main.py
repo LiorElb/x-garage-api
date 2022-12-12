@@ -173,7 +173,7 @@ async def get_car_type(car_num: str):
     car = await CARS.find_one({"license_plate_number": car_num})
     if car is None:
         raise HTTPException(
-            status_code=404, detail=f"Customer {car_num} not found")
+            status_code=404, detail=f"Car {car_num} not found")
     x = car["government_data"]["tozar"]
     y = car["government_data"]["kinuy_mishari"]
     z = car["government_data"]["shnat_yitzur"]
@@ -190,7 +190,7 @@ async def get_car_types():
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
         dic = {'tozar': x, 'kinuy_mishari': y, 'shnat_yitzur': z}
-        if (dic):
+        if dic is not None:
             list.append(dic)
     # return list
     new_list = []
