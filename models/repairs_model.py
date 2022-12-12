@@ -8,10 +8,10 @@ class RepairModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     license_plate_number: str = Field(...)
     area_id: str = Field(...)
-    tipul:object | None = Field(default=None)
+    tipul:list[dict] | None = Field(default=None)
     time_stamp_start: str | None = Field(default=None)
     note: str | None = Field(default=None)
-    rows: object | None = Field(default=None)
+    rows: list[dict] | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
@@ -32,11 +32,11 @@ class RepairModel(BaseModel):
 
 
 class UpdateRepairModel(BaseUpdateModel):
-    tipul: object = Field(default=MISSING)
+    tipul: list[dict] = Field(default=MISSING)
     area_id: str = Field(default=MISSING)
     time_stamp_end: str | None = Field(default=MISSING)
     note: str | None = Field(default=MISSING)
-    rows: object | None = Field(default=MISSING)
+    rows: list[dict] | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
