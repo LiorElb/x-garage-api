@@ -13,7 +13,7 @@ class CustomerModel(BaseModel):
     email: str | None = Field(default=None)
     address: str | None = Field(default=None)
     note: str | None = Field(default=None)
-    phone_book: dict | None = Field(default=None)
+    phone_book: list[dict] | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
@@ -41,7 +41,7 @@ class UpdateCustomerModel(BaseUpdateModel):
     email: str | None = Field(default=MISSING)
     address: str | None = Field(default=MISSING)
     note: str | None = Field(default=MISSING)
-    phone_book: dict | None = Field(default=MISSING)
+    phone_book: list[dict] | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
