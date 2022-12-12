@@ -80,6 +80,15 @@ async def show_customer(customer_id: str):
             status_code=404, detail=f"Customer {customer_id} not found")
 
     return customer
+@app.get("/customersbycar/{plate_num}", response_model=CustomerModel, tags=['customers'])
+async def show_customer(plate_num: str):
+    customers = await CUSTOMERS.find({"license_plate_number": plate_num}).to_list(length=None)
+
+    if customers is None:
+        raise HTTPException(
+            status_code=404, detail=f"car {plate_num} not found")
+
+    return customers
 
 
 @app.put("/customers/{customer_id}", response_model=CustomerModel, tags=['customers'])
