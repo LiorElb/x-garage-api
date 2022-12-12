@@ -190,7 +190,8 @@ async def get_car_types():
         y = car["government_data"]["kinuy_mishari"]
         z = car["government_data"]["shnat_yitzur"]
         dic = {'tozar': x, 'kinuy_mishari': y, 'shnat_yitzur': z}
-        list.append(dic)
+        if (dic):
+            list.append(dic)
     # return list
     new_list = []
     for one_student_choice in list:
