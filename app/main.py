@@ -80,10 +80,11 @@ async def show_customer(customer_id: str):
             status_code=404, detail=f"Customer {customer_id} not found")
 
     return customer
+
+
 @app.get("/customersbycar/{plate_num}", tags=['customers'])
 async def show_customer(plate_num: str):
     customers = await CUSTOMERS.find({"cars": plate_num}).to_list(length=None)
-
     if customers is None:
         raise HTTPException(
             status_code=404, detail=f"car {plate_num} not found")
@@ -215,11 +216,11 @@ async def get_car_types():
 
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
 async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
-    findcar = await CARS.find_one({"license_plate_number": car["license_plate_number"]})
+    car = jsonable_encoder(car)
+    findcar = await CARS.find_one({"license_plate_number": car.license_plate_number})
     if findcar:
         raise HTTPException(
             status_code=404, detail=f"Car found")
-    car = jsonable_encoder(car)
     new = await CARS.insert_one(car)
     new_car = await CARS.find_one(
         {"_id": new.inserted_id},
