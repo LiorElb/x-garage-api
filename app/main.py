@@ -199,8 +199,8 @@ async def get_car_types():
         if car["government_data"] is not None:
             x = car["government_data"]["tozar"]
             y = car["government_data"]["kinuy_mishari"]
-            z = car["government_data"]["shnat_yitzur"]
-            dic = {'tozar': x, 'kinuy_mishari': y, 'shnat_yitzur': z}
+            # z = car["government_data"]["shnat_yitzur"]
+            dic = {'tozar': x, 'kinuy_mishari': y}
             list.append(dic)
     # return list
     new_list = []
