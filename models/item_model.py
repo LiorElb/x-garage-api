@@ -15,7 +15,7 @@ class ItemModel(BaseModel):
     notes: str | None = Field(default=None)
     amount_in_stock: int = Field(default=0, gt=0)
     max_amount_in_stock: int = Field(default=0, gt=0)
-    car_types: list[str] | None = Field(default=None)
+    car_types: list[str] | list[dict] | None = Field(default=None)
     location: str | None = Field(default=None)
 
     class Config:
@@ -49,7 +49,7 @@ class UpdateItemModel(BaseUpdateModel):
     notes: str | None = Field(default=MISSING)
     amount_in_stock: int = Field(default=MISSING)
     max_amount_in_stock: int = Field(default=MISSING)
-    car_types: list[str] | None = Field(default=MISSING)
+    car_types: list[str] | list[dict] | None = Field(default=MISSING)
     location: str | None = Field(default=MISSING)
 
     class Config:

@@ -12,7 +12,7 @@ class UsedModel(BaseModel):
     sub: str | list[str] | None = Field(default=None)
     notes: str | None = Field(default=None)
     amount_in_stock: int = Field(default=0, gt=0)
-    car_types: list[str] | None = Field(default=None)
+    car_types: list[str] | list[dict] | None = Field(default=None)
     location: str | None = Field(default=None)
 
     class Config:
@@ -40,7 +40,7 @@ class UpdateUsedModel(BaseUpdateModel):
     notes: str | None = Field(default=MISSING)
     description: str | None = Field(default=MISSING)
     amount_in_stock: int = Field(default=MISSING)
-    car_types: list[str] | None = Field(default=MISSING)
+    car_types: list[str] | list[dict] | None = Field(default=MISSING)
     location: str | None = Field(default=MISSING)
 
     class Config:
