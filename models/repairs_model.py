@@ -10,6 +10,7 @@ class RepairModel(BaseModel):
     area_id: str = Field(...)
     tipul:list[dict] | None = Field(default=None)
     time_stamp_start: str | None = Field(default=None)
+    time_stamp_end: str | None = Field(default=None)
     note: str | None = Field(default=None)
     rows: list[dict] | None = Field(default=None)
 
