@@ -12,6 +12,7 @@ class SupplierModel(BaseModel):
     email: str | None = Field(default=None)
     address: str | None = Field(default=None)
     note: str | None = Field(default=None)
+    payment: str | None = Field(default=None)
     phone_book: list[dict] | None = Field(default=None)
 
     class Config:
@@ -28,6 +29,7 @@ class SupplierModel(BaseModel):
                 "address": "123 Street, NYC",
                 "note": "screeming bitch",
                 "phone_book": {"name": "cfasdf", "phone": "876543"},
+                "payment":"payment",
             }
         }
 
@@ -38,6 +40,7 @@ class UpdateSupplierModel(BaseUpdateModel):
     email: str | None = Field(default=MISSING)
     address: str | None = Field(default=MISSING)
     note: str | None = Field(default=MISSING)
+    payment: str | None = Field(default=MISSING)
     phone_book: list[dict] | None = Field(default=MISSING)
 
     class Config:
@@ -53,5 +56,6 @@ class UpdateSupplierModel(BaseUpdateModel):
                 "address": "123 Street, NYC",
                 "note": "screeming bitch",
                 "phone_book": {"name":"cfasdf","phone":"876543"},
+                "payment":"payment",
             }
         }
