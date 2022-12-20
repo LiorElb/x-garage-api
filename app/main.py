@@ -8,10 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
-from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, Repairs, Area, Camera, Category
+from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, Area, Camera, Category
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
+from models.tipulim_group_modal import TipulGroupModel, UpdateTipulGroupModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel, UpdateCameraModel
@@ -461,6 +462,55 @@ async def delete_tipul(item_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail="No such item")
+
+
+# /tipulimgroup
+
+@app.get("/tipulgroup", response_model=list[TipulGroupModel], tags=['tipulgroup'])
+async def get_tipul_group():
+    return await TipulGroup.find().to_list(length=None)
+
+
+@app.post("/tipulgroup", response_model=TipulGroupModel, status_code=HTTPStatus.CREATED, tags=['tipulgroup'])
+async def add_tipul_group(item: TipulGroupModel):
+    item = jsonable_encoder(item)
+    new = await TipulGroup.insert_one(item)
+    return await TipulGroup.find_one({"_id": new.inserted_id})
+
+
+@app.get("/tipulgroup/{item_id}", response_model=TipulGroupModel, tags=['tipulgroup'])
+async def show_tipul_group(item_id: str):
+    item = await TipulGroup.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"tipul group {item_id} not found")
+
+    return item
+
+
+@app.put("/tipulgroup/{item_id}", response_model=TipulGroupModel, tags=['tipulgroup'])
+async def update_tipul_group(item_id: str, item: UpdateTipulGroupModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await TipulGroup.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"tipul group {item_id} not found")
+
+    await TipulGroup.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await TipulGroup.find_one({"_id": item_id})
+
+
+@app.delete("/tipulgroup/{item_id}", tags=['tipulgroup'])
+async def delete_tipul(item_id: str):
+    result = await TipulGroup.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
 
 # /repairs
 
