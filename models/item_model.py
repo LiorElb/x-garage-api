@@ -7,14 +7,14 @@ from models.pyobjectid import PyObjectId
 
 class ItemModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    barcode: str | int | None = Field(default=None)
+    barcode: str | None = Field(default=None)
     name: str = Field(...)
     category: str = Field(...)
     sub: str | list[str] | None = Field(default=None)
     supplier: str | None = Field(default=None)
     notes: str | None = Field(default=None)
-    amount_in_stock: str | int | None = Field(default=0, gt=0)
-    max_amount_in_stock: str | int | None = Field(default=0, gt=0)
+    amount_in_stock: str | int = Field(default=0, gt=0)
+    max_amount_in_stock: str | int = Field(default=0, gt=0)
     car_types: list[str] | list[dict] | None = Field(default=None)
     location: str | None = Field(default=None)
 
@@ -47,8 +47,8 @@ class UpdateItemModel(BaseUpdateModel):
     sub: list[str] | str = Field(default=MISSING)
     supplier: str = Field(default=MISSING)
     notes: str | None = Field(default=MISSING)
-    amount_in_stock: int = Field(default=MISSING)
-    max_amount_in_stock: int = Field(default=MISSING)
+    amount_in_stock:  str | int = Field(default=MISSING)
+    max_amount_in_stock:  str | int = Field(default=MISSING)
     car_types: list[str] | list[dict] | None = Field(default=MISSING)
     location: str | None = Field(default=MISSING)
 
