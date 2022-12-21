@@ -7,14 +7,14 @@ from models.pyobjectid import PyObjectId
 
 class ItemModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    barcode: str | None = Field(default=None)
+    barcode: str | int | None = Field(default=None)
     name: str = Field(...)
     category: str = Field(...)
     sub: str | list[str] | None = Field(default=None)
     supplier: str | None = Field(default=None)
     notes: str | None = Field(default=None)
-    amount_in_stock: int = Field(default=0, gt=0)
-    max_amount_in_stock: int = Field(default=0, gt=0)
+    amount_in_stock: str | int | None = Field(default=0, gt=0)
+    max_amount_in_stock: str | int | None = Field(default=0, gt=0)
     car_types: list[str] | list[dict] | None = Field(default=None)
     location: str | None = Field(default=None)
 
