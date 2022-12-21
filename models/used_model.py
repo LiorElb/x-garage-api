@@ -12,8 +12,8 @@ class UsedModel(BaseModel):
     sub: str | list[str] | None = Field(default=None)
     notes: str | None = Field(default=None)
     amount_in_stock: int = Field(default=0, gt=0)
-    price_cost: int = Field(default=0, gt=0)
-    price_sell: int = Field(default=0, gt=0)
+    price_cost: float = Field(default=0, gt=0)
+    price_sell: float = Field(default=0, gt=0)
     car_types: list[str] | list[dict] | None = Field(default=None)
     location: str | None = Field(default=None)
 
@@ -41,9 +41,9 @@ class UpdateUsedModel(BaseUpdateModel):
     sub: list[str] | str = Field(default=MISSING)
     notes: str | None = Field(default=MISSING)
     description: str | None = Field(default=MISSING)
-    price_cost:  str | int = Field(default=MISSING)
-    price_sell: str | int = Field(default=MISSING)
-    amount_in_stock: str | int = Field(default=MISSING)
+    price_cost: float = Field(default=MISSING)
+    price_sell: float = Field(default=MISSING)
+    amount_in_stock:  int = Field(default=MISSING)
     car_types: list[str] | list[dict] | None = Field(default=MISSING)
     location: str | None = Field(default=MISSING)
 
