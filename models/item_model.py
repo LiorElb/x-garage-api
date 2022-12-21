@@ -17,6 +17,8 @@ class ItemModel(BaseModel):
     max_amount_in_stock: str | int = Field(default=0, gt=0)
     car_types: list[str] | list[dict] | None = Field(default=None)
     location: str | None = Field(default=None)
+    price_cost: int = Field(default=0, gt=0)
+    price_sell: int = Field(default=0, gt=0)
 
     class Config:
         allow_population_by_field_name = True
@@ -51,6 +53,8 @@ class UpdateItemModel(BaseUpdateModel):
     max_amount_in_stock:  str | int = Field(default=MISSING)
     car_types: list[str] | list[dict] | None = Field(default=MISSING)
     location: str | None = Field(default=MISSING)
+    price_cost:  str | int = Field(default=MISSING)
+    price_sell: str | int = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
