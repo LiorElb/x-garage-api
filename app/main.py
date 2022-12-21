@@ -337,20 +337,18 @@ async def add_storage(item: ItemModel):
 @app.get("/storage/{item_id}", response_model=ItemModel, tags=['storage'])
 async def show_storage(item_id: str):
     item = await Storage.find_one({"_id": item_id})
-
     if item is None:
         raise HTTPException(
             status_code=404, detail=f"storage {item_id} not found")
-
     return item
 
-@app.get("/storagebycategory/{category_id}", response_model=ItemModel, tags=['storage'])
+
+@app.get("/storagebycategory/{category_id}", response_model=list[ItemModel], tags=['storage'])
 async def show_storage(category_id: str):
     item = await Storage.find({"category": category_id}).to_list(length=None)
     if item is None:
         raise HTTPException(
             status_code=404, detail=f"storage {category_id} not found")
-
     return item
 
 
