@@ -544,6 +544,16 @@ async def show_repairs(item_id: str):
 
     return item
 
+@app.get("/repairsproduct/{item_id}", response_model=RepairModel, tags=['repairs'])
+async def show_repairs(item_id: str):
+    item = await Repairs.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"repairs {item_id} not found")
+
+    return item["products"]
+
 
 @app.put("/repairs/{item_id}", response_model=RepairModel, tags=['repairs'])
 async def update_repairs(item_id: str, item: UpdateRepairModel = Body(...)):
