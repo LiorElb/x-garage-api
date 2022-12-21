@@ -13,6 +13,7 @@ class RepairModel(BaseModel):
     time_stamp_end: str | None = Field(default=None)
     note: str | None = Field(default=None)
     rows: list[dict] | None = Field(default=None)
+    products: list[dict] | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
@@ -28,6 +29,7 @@ class RepairModel(BaseModel):
                 "time_stamp_start": "054-3532312",
                 "note": "screeming bitch",
                 "rows": "screeming bitch",
+                "products": "screeming bitch",
             }
         }
 
@@ -38,6 +40,7 @@ class UpdateRepairModel(BaseUpdateModel):
     time_stamp_end: str | None = Field(default=MISSING)
     note: str | None = Field(default=MISSING)
     rows: list[dict] | None = Field(default=MISSING)
+    products: list[dict] | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
@@ -52,5 +55,6 @@ class UpdateRepairModel(BaseUpdateModel):
                 "time_stamp_start": "054-3532312",
                 "note": "screeming bitch",
                 "rows": "screeming bitch",
+                "products": "screeming bitch",
             }
         }
