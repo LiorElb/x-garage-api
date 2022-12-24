@@ -14,6 +14,7 @@ class SupplierModel(BaseModel):
     note: str | None = Field(default=None)
     payment: str | None = Field(default=None)
     phone_book: list[dict] | None = Field(default=None)
+    storage_types: list[str] | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
@@ -30,6 +31,7 @@ class SupplierModel(BaseModel):
                 "note": "screeming bitch",
                 "phone_book": {"name": "cfasdf", "phone": "876543"},
                 "payment":"payment",
+                "storage_types": ["ברקסים", "toyota"],
             }
         }
 
@@ -42,6 +44,7 @@ class UpdateSupplierModel(BaseUpdateModel):
     note: str | None = Field(default=MISSING)
     payment: str | None = Field(default=MISSING)
     phone_book: list[dict] | None = Field(default=MISSING)
+    storage_types: list[str] | None = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
@@ -57,5 +60,6 @@ class UpdateSupplierModel(BaseUpdateModel):
                 "note": "screeming bitch",
                 "phone_book": {"name":"cfasdf","phone":"876543"},
                 "payment":"payment",
+                "storage_types": ["ברקסים", "toyota"],
             }
         }
