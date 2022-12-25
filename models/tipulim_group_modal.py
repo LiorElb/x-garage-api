@@ -10,7 +10,7 @@ class TipulGroupModel(BaseModel):
     name: str = Field(...)
     tipulim: list[str] | None = Field(default=None)
     check_list: list[str] | None = Field(default=None)
-    price: float = Field(default=0, gt=0)
+    price: float | str= Field(default=0, gt=0)
     
     class Config:
         allow_population_by_field_name = True
