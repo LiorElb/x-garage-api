@@ -10,6 +10,7 @@ class TipulGroupModel(BaseModel):
     name: str = Field(...)
     tipulim: list[str] | None = Field(default=None)
     check_list: list[str] | None = Field(default=None)
+    price: float = Field(default=0, gt=0)
     
     class Config:
         allow_population_by_field_name = True
@@ -20,6 +21,7 @@ class TipulGroupModel(BaseModel):
         schema_extra = {
             "example": {
                 "name": "טיפול",
+                "price": 0,
                 "tipulim": ["ברקסים", "toyota"],
                 "check_list": ["לבדוק שמן", "toyota"]
             }
@@ -30,6 +32,7 @@ class UpdateTipulGroupModel(BaseUpdateModel):
     name: str = Field(default=MISSING)
     tipulim: list[str] | None = Field(default=MISSING)
     check_list: list[str] | None = Field(default=MISSING)
+    price: float = Field(default=MISSING)
 
     class Config:
         arbitrary_types_allowed = True
@@ -39,6 +42,7 @@ class UpdateTipulGroupModel(BaseUpdateModel):
         schema_extra = {
             "example": {
                 "name": "טיפול",
+                "price": 0,
                 "tipulim": ["דגש", "ברקסים"],
                 "check_list": ["honda", "לבדוק שמן"]
             }
