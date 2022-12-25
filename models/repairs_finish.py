@@ -14,6 +14,7 @@ class RepairFinishModel(BaseModel):
     note: str | None = Field(default=None)
     rows: list[dict] | None = Field(default=None)
     products: list[dict] | None = Field(default=None)
+    car: list[dict] | None = Field(default=None)
     kilometer: int | None = Field(default=0)
 
     class Config:
@@ -32,5 +33,6 @@ class RepairFinishModel(BaseModel):
                 "rows": "screeming bitch",
                 "products": "screeming bitch",
                 "kilometer":"1234567",
+                "car":"1234567",
             }
         }
