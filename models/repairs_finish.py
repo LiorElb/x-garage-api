@@ -7,14 +7,14 @@ from models.pyobjectid import PyObjectId
 class RepairFinishModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     license_plate_number: str = Field(...)
-    area: list[dict] = Field(...)
+    area: dict = Field(...)
     tipul:list[dict] | None = Field(default=None)
     time_stamp_start: str | None = Field(default=None)
     time_stamp_end: str | None = Field(default=None)
     note: str | None = Field(default=None)
     rows: list[dict] | None = Field(default=None)
     products: list[dict] | None = Field(default=None)
-    car: list[dict] | None = Field(default=None)
+    car: dict | None = Field(default=None)
     kilometer: int | None = Field(default=0)
 
     class Config:
