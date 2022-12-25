@@ -8,12 +8,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
-from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, Area, Camera, Category
+from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, RepairsFinish, Area, Camera, Category
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.tipulim_group_modal import TipulGroupModel, UpdateTipulGroupModel
 from models.repairs_model import RepairModel, UpdateRepairModel
+from models.repairs_finish import RepairFinishModel
 from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel, UpdateCameraModel
 from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
@@ -562,6 +563,40 @@ async def update_repairs(item_id: str, item: UpdateRepairModel = Body(...)):
 @app.delete("/repairs/{item_id}", tags=['repairs'])
 async def delete_repairs(item_id: str):
     result = await Repairs.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
+
+# /repairsfinish
+
+
+@app.get("/repairsfinish", response_model=list[RepairFinishModel], tags=['repairsfinish'])
+async def get_repairsfinish():
+    return await RepairsFinish.find().to_list(length=None)
+
+
+@app.post("/repairsfinish", response_model=RepairFinishModel, status_code=HTTPStatus.CREATED, tags=['repairsfinish'])
+async def add_repairsfinish(item: RepairFinishModel):
+    item = jsonable_encoder(item)
+    new = await RepairsFinish.insert_one(item)
+    return await RepairsFinish.find_one({"_id": new.inserted_id})
+
+
+@app.get("/repairsfinish/{item_id}", response_model=RepairFinishModel, tags=['repairsfinish'])
+async def show_repairsfinish(item_id: str):
+    item = await RepairsFinish.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"repairsfinish {item_id} not found")
+
+    return item
+
+@app.delete("/repairsfinish/{item_id}", tags=['repairsfinish'])
+async def delete_repairsfinish(item_id: str):
+    result = await RepairsFinish.delete_one({"_id": item_id})
 
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
