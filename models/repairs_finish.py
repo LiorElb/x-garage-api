@@ -15,6 +15,8 @@ class RepairFinishModel(BaseModel):
     rows: list[dict] | None = Field(default=None)
     products: list[dict] | None = Field(default=None)
     car: dict | None = Field(default=None)
+    customer: dict | None = Field(default=None)
+    total: float | None = Field(default=0)
     kilometer: int | None = Field(default=0)
 
     class Config:
