@@ -595,7 +595,7 @@ async def show_repairsfinish(item_id: str):
     return item
 
 @app.get("/repairsfinishcar/{item_id}", response_model=RepairFinishModel, tags=['repairsfinish'])
-async def show_repairsfinish(item_id: str):
+async def show_repairsfinishcar(item_id: str):
     item = await RepairsFinish.find({"license_plate_number": item_id}).to_list(length=None)
     if item is None:
         raise HTTPException(
