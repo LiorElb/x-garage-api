@@ -589,8 +589,7 @@ async def show_repairsfinish(item_id: str):
     item = await RepairsFinish.find({"license_plate_number": item_id}).to_list(length=None)
 
     if item is None:
-        raise HTTPException(
-            status_code=404, detail=f"repairsfinish for {item_id} not found")
+        return []
 
     return item
 
