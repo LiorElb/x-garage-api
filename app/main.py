@@ -586,7 +586,7 @@ async def add_repairsfinish(item: RepairFinishModel):
 
 @app.get("/repairsfinish/{item_id}", response_model=RepairFinishModel, tags=['repairsfinish'])
 async def show_repairsfinish(item_id: str):
-    item = await RepairsFinish.find_one({"_id": item_id})
+    item = await RepairsFinish.find_one({"license_plate_number": item_id})
 
     if item is None:
         raise HTTPException(
