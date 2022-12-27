@@ -587,10 +587,6 @@ async def add_repairsfinish(item: RepairFinishModel):
 @app.get("/repairsfinish/{item_id}", response_model=RepairFinishModel, tags=['repairsfinish'])
 async def show_repairsfinish(item_id: str):
     item = await RepairsFinish.find({"license_plate_number": item_id}).to_list(length=None)
-
-    if item is None:
-        return []
-
     return item
 
 @app.delete("/repairsfinish/{item_id}", tags=['repairsfinish'])
