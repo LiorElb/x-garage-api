@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 import aiohttp
-from fastapi import FastAPI, HTTPException, Body, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Body, BackgroundTasks, Header
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,7 +20,7 @@ from models.camera_model import CameraModel, UpdateCameraModel
 from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
 
 app = FastAPI(version="0.8.1")
-
+key = "ea5e6rtyuhjbvxsre76oiukjhbvdrt576tiyukhytyohbvcjxa7wtfikaw"
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
 ]
@@ -37,7 +37,10 @@ app.add_middleware(
 # /camera
 
 @app.get("/camera", response_model=list[CameraModel], tags=['camera'])
-async def get_camera():
+async def get_camera(*, security_key: str = Header(None)):
+    # Validate the security key
+    if security_key != key:
+        raise HTTPException(status_code=401, detail="Invalid security key"):
     return await Camera.find().to_list(length=None)
 
 
