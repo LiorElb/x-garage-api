@@ -7,7 +7,7 @@ from models.pyobjectid import PyObjectId
 
 class ItemModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    barcode: str | None = Field(default=None)
+    barcode:  list[str] | str | None = Field(default=None)
     name: str = Field(...)
     category: str = Field(...)
     sub: str | list[str] | None = Field(default=None)
@@ -43,7 +43,7 @@ class ItemModel(BaseModel):
 
 
 class UpdateItemModel(BaseUpdateModel):
-    barcode: str | None = Field(default=MISSING)
+    barcode:  list[str] | str | None = Field(default=MISSING)
     name: str = Field(default=MISSING)
     category: str = Field(default=MISSING)
     sub: list[str] | str = Field(default=MISSING)
