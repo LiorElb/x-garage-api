@@ -15,6 +15,7 @@ class RepairModel(BaseModel):
     rows: list[dict] | None = Field(default=None)
     products: list[dict] | None = Field(default=None)
     kilometer: int | None = Field(default=0)
+    car: dict | None = Field(default=None)
 
     class Config:
         allow_population_by_field_name = True
