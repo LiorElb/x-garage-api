@@ -231,6 +231,7 @@ async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
     # findcar = await CARS.find_one({"license_plate_number": car.license_plate_number})
     # if findcar:
     #     return "Car found"
+    #     update the governement data
     new = await CARS.insert_one(car)
     new_car = await CARS.find_one(
         {"_id": new.inserted_id},
@@ -260,6 +261,14 @@ async def get_car_info_from_gov_db(license_plate_number: str):
                 }
         ) as response:
             records = (await response.json())['result']['records']
+# if not found look here -  "mispar_rechev": [license_plate_number]
+# 03adc637-b6fe-402b-9937-7c3d3afc9140
+# ואם לא אז צריך לחפש פה
+# resource_id=cd3acc5c-03c3-4c89-9c54-d40f93c0d790
+# ואם לא אז לבדוק אם הרכב ירד מהכביש פה
+# resource_id=851ecab1-0622-4dbe-a6c7-f950cf82abf9
+# ואם הוא ירד מהכביש תעדכן את פפוש איזה סעיף צריך לבדוק
+
             try:
                 result = records[0]
                 async with session.post(
