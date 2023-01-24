@@ -783,7 +783,6 @@ async def delete_supplier(item_id: str):
 
 # /errors
 
-
 @app.get("/errorcode", response_model=list[ErrorCodeModel], tags=['errorcode'])
 async def get_errorcode():
     return await ErrorCode.find().to_list(length=None)
@@ -798,10 +797,8 @@ async def add_errorcode(item: ErrorCodeModel):
 
 @app.get("/errorcode/{item_id}", response_model=list[ErrorCodeModel], tags=['errorcode'])
 async def show_errorcode(item_id: str):
-    item = await ErrorCode.find({"error": item_id}).to_list(length=None)
-
+    item = await ErrorCode.find({"code": item_id}).to_list(length=None)
     if item is None:
         raise HTTPException(
             status_code=404, detail=f"errorcode {item_id} not found")
-
     return item
