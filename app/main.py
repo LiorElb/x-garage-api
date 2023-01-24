@@ -8,13 +8,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
-from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, RepairsFinish, Area, Camera, Category
+from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, RepairsFinish, Area, Camera, Category, ErrorCode
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.tipulim_group_modal import TipulGroupModel, UpdateTipulGroupModel
 from models.repairs_model import RepairModel, UpdateRepairModel
 from models.repairs_finish import RepairFinishModel
+from models.error_code_model import ErrorCodeModel
 from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel, UpdateCameraModel
 from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
@@ -37,13 +38,14 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-#get_camera(* , security_key: str = Header(None)):
-    # Validate the security key
-    # if security_key != key:
-    #     raise HTTPException(status_code=401, detail="Invalid security key")
-# 
+# get_camera(* , security_key: str = Header(None)):
+# Validate the security key
+# if security_key != key:
+#     raise HTTPException(status_code=401, detail="Invalid security key")
+#
 
 # /camera
+
 
 @app.get("/camera", response_model=list[CameraModel], tags=['camera'])
 async def get_camera():
@@ -231,6 +233,7 @@ async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
     # findcar = await CARS.find_one({"license_plate_number": car.license_plate_number})
     # if findcar:
     #     return "Car found"
+    #       and
     #     update the governement data
     new = await CARS.insert_one(car)
     new_car = await CARS.find_one(
@@ -361,6 +364,7 @@ async def show_storage(item_id: str):
             status_code=404, detail=f"storage {item_id} not found")
     return item
 
+
 @app.get("/storagebarcode/{item_id}", response_model=ItemModel, tags=['storage'])
 async def show_storage(item_id: str):
     item = await Storage.find_one({"barcode": item_id})
@@ -368,6 +372,7 @@ async def show_storage(item_id: str):
         raise HTTPException(
             status_code=404, detail=f"storage {item_id} not found")
     return item
+
 
 @app.get("/storagebycategory/{category_id}", response_model=list[ItemModel], tags=['storage'])
 async def show_storage(category_id: str):
@@ -774,3 +779,29 @@ async def delete_supplier(item_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail="No such item")
+
+
+# /errors
+
+
+@app.get("/errorcode", response_model=list[ErrorCodeModel], tags=['errorcode'])
+async def get_errorcode():
+    return await ErrorCode.find().to_list(length=None)
+
+
+@app.post("/errorcode", response_model=ErrorCodeModel, status_code=HTTPStatus.CREATED, tags=['errorcode'])
+async def add_errorcode(item: ErrorCodeModel):
+    item = jsonable_encoder(item)
+    new = await ErrorCode.insert_one(item)
+    return await ErrorCode.find_one({"_id": new.inserted_id})
+
+
+@app.get("/errorcode/{item_id}", response_model=list[ErrorCodeModel], tags=['errorcode'])
+async def show_errorcode(item_id: str):
+    item = await ErrorCode.find({"error_code": item_id}).to_list(length=None)
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"errorcode {item_id} not found")
+
+    return item
