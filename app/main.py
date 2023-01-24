@@ -790,6 +790,7 @@ async def get_errorcode():
 
 @app.post("/errorcode", response_model=ErrorCodeModel, status_code=HTTPStatus.CREATED, tags=['errorcode'])
 async def add_errorcode(item: ErrorCodeModel):
+    item.code = item.code.lower()
     item = jsonable_encoder(item)
     new = await ErrorCode.insert_one(item)
     return await ErrorCode.find_one({"_id": new.inserted_id})

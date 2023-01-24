@@ -22,9 +22,3 @@ class ErrorCodeModel(BaseModel):
                 "cause": "definition,definition",
             }
         }
-
-    def __init__(self, code: str, definition: str, cause: list[str] = None, **kwargs):
-        self.code = code.lower()
-        self.definition = definition
-        self.cause = cause
-        super().__init__(**kwargs)
