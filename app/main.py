@@ -797,6 +797,7 @@ async def add_errorcode(item: ErrorCodeModel):
 
 @app.get("/errorcode/{item_id}", response_model=list[ErrorCodeModel], tags=['errorcode'])
 async def show_errorcode(item_id: str):
+    item_id = item_id.lower()
     item = await ErrorCode.find({"code": item_id}).to_list(length=None)
     if item is None:
         raise HTTPException(
