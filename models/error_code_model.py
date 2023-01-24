@@ -6,7 +6,7 @@ from models.pyobjectid import PyObjectId
 
 class ErrorCodeModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    error_code: str = Field(...)
+    code: str = Field(...)
     definition: str = Field(...)(default=MISSING)
     cause: list[str] | None = Field(default=MISSING)
 
