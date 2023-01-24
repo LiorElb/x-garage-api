@@ -7,7 +7,7 @@ from models.pyobjectid import PyObjectId
 class ErrorCodeModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     code: str = Field(...)
-    definition: str = Field(...)(default=MISSING)
+    definition: str = Field(...)
     cause: list[str] | None = Field(default=MISSING)
 
     class Config:
@@ -17,7 +17,7 @@ class ErrorCodeModel(BaseModel):
         }
         schema_extra = {
             "example": {
-                "error_code": "12312123",
+                "code": "12312123",
                 "definition": "dict",
                 "cause": "definition,definition",
             }
