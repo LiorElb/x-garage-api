@@ -230,17 +230,22 @@ async def get_car_types():
 @app.post("/cars", response_model=CarModel, status_code=HTTPStatus.CREATED, tags=['cars'])
 async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
     car = jsonable_encoder(car)
-    # findcar = await CARS.find_one({"license_plate_number": car.license_plate_number})
-    # if findcar:
-    #     return "Car found"
-    #       and
-    #     update the governement data
-    new = await CARS.insert_one(car)
+
+    existing_car = await CARS.find_one(
+        {"license_plate_number": car["license_plate_number"]}
+    )
+    if existing_car:
+        # If the license plate number already exists, continue with the existing _id
+        _id = existing_car["_id"]
+    else:
+        # If the license plate number does not exist, insert a new car
+        new = await CARS.insert_one(car)
+        _id = new.inserted_id
     new_car = await CARS.find_one(
-        {"_id": new.inserted_id},
+        {"_id": _id},
         projection={"license_plate_number": 1}
     )
-    bg_tasks.add_task(enrich_car, new.inserted_id,
+    bg_tasks.add_task(enrich_car, _id,
                       new_car['license_plate_number'])
     return new_car
 
