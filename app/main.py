@@ -688,6 +688,56 @@ async def delete_category(item_id: str):
                             detail="No such item")
 
 
+# /categorytools
+
+
+@app.get("/categorytools", response_model=list[ToolsCategoryModel], tags=['categorytools'])
+async def get_categorytools():
+    return await CategoryTools.find().to_list(length=None)
+
+
+@app.post("/categorytools", response_model=ToolsCategoryModel, status_code=HTTPStatus.CREATED, tags=['categorytools'])
+async def add_categorytools(item: ToolsCategoryModel):
+    item = jsonable_encoder(item)
+    new = await CategoryTools.insert_one(item)
+    return await CategoryTools.find_one({"_id": new.inserted_id})
+
+
+@app.get("/categorytools/{item_id}", response_model=ToolsCategoryModel, tags=['categorytools'])
+async def show_categorytools(item_id: str):
+    item = await CategoryTools.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"categorytools {item_id} not found")
+
+    return item
+
+
+@app.put("/categorytools/{item_id}", response_model=ToolsCategoryModel, tags=['categorytools'])
+async def update_categorytools(item_id: str, item: UpdateToolsCategoryModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await CategoryTools.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"categorytools {item_id} not found")
+
+    await CategoryTools.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await CategoryTools.find_one({"_id": item_id})
+
+
+@app.delete("/categorytools/{item_id}", tags=['categorytools'])
+async def delete_categorytools(item_id: str):
+    result = await CategoryTools.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
+
+
 # /area
 
 
