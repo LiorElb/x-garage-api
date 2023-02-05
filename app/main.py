@@ -20,7 +20,7 @@ from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel, UpdateCameraModel
 from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
 
-app = FastAPI(version="0.8.1")
+app = FastAPI(version="0.8.2")
 key = "ea5e6rtyuhjbvxsre76oiukjhbvdrt576tiyukhytyohbvcjxa7wtfikaw"
 origins = [
     "*"  # TODO: Authentication - make sure its safe with chosen auth method
@@ -301,7 +301,7 @@ async def get_car_info_from_gov_db(license_plate_number: str):
                 return None
 
 
-@app.get("/cars/{license_plate_number}", response_model=CarModel, tags=['cars'])
+@app.get("/cars/{license_plate_number}", tags=['cars'])
 async def show_car(license_plate_number: str):
     car = await CARS.find_one({"license_plate_number": license_plate_number})
 
