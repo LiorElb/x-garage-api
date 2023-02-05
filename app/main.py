@@ -650,6 +650,7 @@ async def get_category():
 @app.post("/category", response_model=StorageCategoryModel, status_code=HTTPStatus.CREATED, tags=['category'])
 async def add_category(item: StorageCategoryModel):
     item = jsonable_encoder(item)
+    item['number'] = await Category.count_documents({})
     new = await Category.insert_one(item)
     return await Category.find_one({"_id": new.inserted_id})
 
@@ -699,6 +700,7 @@ async def get_categorytools():
 @app.post("/categorytools", response_model=ToolsCategoryModel, status_code=HTTPStatus.CREATED, tags=['categorytools'])
 async def add_categorytools(item: ToolsCategoryModel):
     item = jsonable_encoder(item)
+    item['number'] = await Category.count_documents({})
     new = await CategoryTools.insert_one(item)
     return await CategoryTools.find_one({"_id": new.inserted_id})
 

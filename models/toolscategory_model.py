@@ -8,6 +8,7 @@ from models.pyobjectid import PyObjectId
 class ToolsCategoryModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str = Field(...)
+    number: int | None = Field(default=None)
     sub_categories: list[str] | None = Field(default=None)
 
     class Config:
@@ -26,6 +27,7 @@ class ToolsCategoryModel(BaseModel):
 
 class UpdateToolsCategoryModel(BaseUpdateModel):
     name: str | None = Field(default=MISSING)
+    number: int | None = Field(default=MISSING)
     sub_categories: list[str] | None = Field(default=MISSING)
 
     class Config:
