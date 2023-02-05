@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
-from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, RepairsFinish, Area, Camera, Category, ErrorCode
+from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, RepairsFinish, Area, Camera, Category,CategoryTools, ErrorCode
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
@@ -19,6 +19,7 @@ from models.error_code_model import ErrorCodeModel
 from models.area_model import AreaModel, UpdateAreaModel
 from models.camera_model import CameraModel, UpdateCameraModel
 from models.storagecategory_model import StorageCategoryModel, UpdateStorageCategoryModel
+from models.toolscategory_model import ToolsCategoryModel, UpdateToolsCategoryModel
 
 app = FastAPI(version="0.8.2")
 key = "ea5e6rtyuhjbvxsre76oiukjhbvdrt576tiyukhytyohbvcjxa7wtfikaw"
