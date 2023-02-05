@@ -8,9 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.car_model import CarModel, UpdateCarModel
 from models.customer_model import CustomerModel, UpdateCustomerModel
 from models.supplier_model import SupplierModel, UpdateSupplierModel
-from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tipul, TipulGroup, Repairs, RepairsFinish, Area, Camera, Category,CategoryTools, ErrorCode
+from app.mongo_client import CUSTOMERS, SUPPLIER, CARS, Storage, Used, Tools, Tipul, TipulGroup, Repairs, RepairsFinish, Area, Camera, Category, CategoryTools, ErrorCode
 from models.item_model import ItemModel, UpdateItemModel
 from models.used_model import UsedModel, UpdateUsedModel
+from models.tools_model import ToolsModel, UpdateToolsModel
 from models.tipulim_modal import TipulModel, UpdateTipulModel
 from models.tipulim_group_modal import TipulGroupModel, UpdateTipulGroupModel
 from models.repairs_model import RepairModel, UpdateRepairModel
@@ -459,6 +460,54 @@ async def delete_used(item_id: str):
                             detail="No such item")
 
 
+# /ToolsItems
+
+@app.get("/tools", response_model=list[ToolsModel], tags=['tools'])
+async def get_tools():
+    return await Tools.find().to_list(length=None)
+
+
+@app.post("/tools", response_model=ToolsModel, status_code=HTTPStatus.CREATED, tags=['tools'])
+async def add_tools(item: ToolsModel):
+    item = jsonable_encoder(item)
+    new = await Tools.insert_one(item)
+    return await Tools.find_one({"_id": new.inserted_id})
+
+
+@app.get("/tools/{item_id}", response_model=ToolsModel, tags=['tools'])
+async def show_tools(item_id: str):
+    item = await Tools.find_one({"_id": item_id})
+
+    if item is None:
+        raise HTTPException(
+            status_code=404, detail=f"tools {item_id} not found")
+
+    return item
+
+
+@app.put("/tools/{item_id}", response_model=ToolsModel, tags=['tools'])
+async def update_tools(item_id: str, item: UpdateToolsModel = Body(...)):
+    new_item = item.dict()
+
+    existing = await Tools.find_one({"_id": item_id}, projection={"_id": 1})
+    if existing is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f"tools {item_id} not found")
+
+    await Tools.update_one({"_id": item_id}, {"$set": new_item})
+
+    return await Tools.find_one({"_id": item_id})
+
+
+@app.delete("/tools/{item_id}", tags=['tools'])
+async def delete_tools(item_id: str):
+    result = await Tools.delete_one({"_id": item_id})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail="No such item")
+
+
 # /tipulim
 
 @app.get("/tipul", response_model=list[TipulModel], tags=['tipul'])
@@ -737,7 +786,6 @@ async def delete_categorytools(item_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail="No such item")
-
 
 
 # /area
