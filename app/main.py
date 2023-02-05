@@ -307,8 +307,8 @@ async def show_car(license_plate_number: str):
 
     if car is None:
         return {"detail": f"Car {license_plate_number} not found"}
-
-    return car
+    else:
+        return car
 
 
 @app.put("/cars/{license_plate_number}", response_model=CarModel, tags=['cars'])
