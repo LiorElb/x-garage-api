@@ -306,9 +306,7 @@ async def show_car(license_plate_number: str):
     car = await CARS.find_one({"license_plate_number": license_plate_number})
 
     if car is None:
-        raise HTTPException(
-            status_code=404, detail=f"Car {license_plate_number} not found")
-
+        return {"message": f"Car {license_plate_number} not found"}
     return car
 
 
