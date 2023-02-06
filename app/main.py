@@ -249,7 +249,11 @@ async def add_car(car: CarModel, bg_tasks: BackgroundTasks):
     )
     bg_tasks.add_task(enrich_car, _id,
                       new_car['license_plate_number'])
-    return new_car
+
+    new_car_result = await CARS.find_one(
+        {"_id": _id}
+    )
+    return new_car_result
 
 
 async def enrich_car(car_oid: str, license_plate_number: str):
